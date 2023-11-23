@@ -53,24 +53,15 @@ servers:
         description: Your tenant id
   - url: https://admin.da.live
 paths:
-  /users/{username}:
-    $ref: paths/users_{username}.yaml
-  /echo:
-    $ref: paths/echo.yaml
+  /project/{owner}/{repo}/{ref}/{path}:
+    $ref: "./project-api.yaml#/project"
 components:
   securitySchemes:
-    main_auth:
-      type: oauth2
-      flows:
-        implicit:
-          authorizationUrl: http://example.com/api/oauth/dialog
-          scopes:
-            read:users: read users info
-            write:users: modify or remove users
-    api_key:
+    AuthCookie:
       type: apiKey
-      in: header
-      name: api_key
-    basic_auth:
+      in: cookie
+      name: auth_token
+    BearerToken:
       type: http
-      scheme: basic
+      scheme: bearer
+      bearerFormat: JWT
