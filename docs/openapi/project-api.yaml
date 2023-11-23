@@ -1,4 +1,4 @@
-preview:
+project:
   get:
     operationId: previewStatus
     tags:
