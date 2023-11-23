@@ -1,0 +1,29 @@
+organization: chrismillar
+
+extends:
+  - recommended
+
+theme:
+  openapi:
+    theme:
+      sidebar:
+        backgroundColor: '#FFF'
+      rightPanel:
+        backgroundColor: '#2B2B2B'
+      typography:
+        links:
+          color: '#0090cc'
+
+apis:
+  admin@v1:
+    root: docs/openapi/admin-api.yaml
+    rules:
+      operation-4xx-response: off
+      operation-2xx-response: off
+      path-not-include-query: off
+  admin@next:
+    root: docs/openapi/admin-api.yaml
+    rules:
+      operation-4xx-response: off
+      operation-2xx-response: off
+      path-not-include-query: off
