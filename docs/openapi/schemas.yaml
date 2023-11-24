@@ -1,3 +1,78 @@
+# Dark Alley
+putSiteBody:
+  description: Create site body
+  properties:
+    aemOrigin:
+      description: Use a different AEM origin than what is inferred from the path.
+      type: url
+    prodOrigin:
+      description: Use a different production origin than what is read from the repository sidekick config.
+      type: url
+
+sourceInfo:
+  required:
+    - source
+  properties:
+    source:
+      description: Information about a Dark Alley resource.
+      allOf:
+        - required:
+            - editUrl
+            - viewUrl
+            - status
+        - properties:
+            editUrl:
+              description: The edit URL of the resource.
+              type: string
+              format: url
+            viewUrl:
+              description: The view URL of the resource. For a site, used in AEM fstab.yaml.
+              type: string
+              format: url
+            status:
+              description: HTTP status response of the requested resource.
+              type: number
+            error:
+              description: Error message when there was a problem.
+
+codeInfo:
+  required:
+    - code
+  properties:
+    code:
+      description: Information about the code repository.
+      type: object
+      allOf:
+        - required:
+            - repoUrl
+        - properties:
+            repoUrl:
+              description: The URL of the code repository.
+              type: string
+              format: url
+
+aemInfo:
+  required:
+    - aem
+  properties:
+    aem:
+      description: Information about the AEM resource.
+      type: object
+      allOf:
+        - required:
+            - previewUrl
+            - liveUrl
+        - properties:
+            previewUrl:
+              description: The AEM Preview URL.
+              type: string
+              format: url
+            liveUrl:
+              description: The AEM Live URL.
+              type: string
+              format: url
+
+
 # generic content bus resource
 contentBusResource:
   required:
@@ -261,24 +336,6 @@ editInfo:
 # code
 
 # information about a code bus resource
-codeInfo:
-  required:
-    - code
-  properties:
-    code:
-      description: Information about a code bus resource
-      type: object
-      allOf:
-        - required:
-            - status
-        - properties:
-            status:
-              description: HTTP status of response when fetching thre information of the resource
-              type: number
-            error:
-              description: Message of error when there was a problem fetching the information of the resource
-        - $ref: "#/codeBusResource"
-        - $ref: "#/permissions"
 
 changeEntry:
   description: Describes the changes made to one resource.

@@ -8,11 +8,15 @@
   },
   "scripts": {
     "docs:build": "npx @redocly/cli build-docs -o docs/index.html admin@v1",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "deploy": "wrangler deploy",
+    "dev": "wrangler dev",
+    "start": "wrangler dev"
   },
   "author": "",
   "license": "Apache-2.0",
   "devDependencies": {
-    "@redocly/cli": "^1.4.1"
+    "@redocly/cli": "^1.4.1",
+    "wrangler": "^3.17.1"
   }
 }

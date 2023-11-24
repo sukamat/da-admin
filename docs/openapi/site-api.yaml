@@ -1,0 +1,81 @@
+site:
+  get:
+    operationId: siteDetails
+    tags:
+      - site
+    summary: Site status
+    description: Returns details about the site.
+    parameters:
+      - $ref: "./parameters.yaml#/projectParam"
+      - $ref: "./parameters.yaml#/siteParam"
+    responses:
+      '200':
+        description: The site details
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "./schemas.yaml#/sourceInfo"
+                - $ref: "./schemas.yaml#/codeInfo"
+                - $ref: "./schemas.yaml#/aemInfo"
+            examples:
+              success:
+                description: Success response of a site.
+                value:
+                  da:
+                    edit: "https://da.live/adobecom/blog"
+                    content: "https://content.da.live/adobecom/blog/"
+                    status: 201
+                  code:
+                    url: "https://github.com/adobecom/blog"
+                  aem: 
+                    preview: "https://main--blog--adobecom.hlx.page"
+                    live: "https://main--blog--adobecom.hlx.live"
+      '400':
+        $ref: "./responses.yaml#/400"
+      '404':
+        $ref: "./responses.yaml#/404"
+  put:
+    operationId: createSite
+    tags:
+      - site
+    summary: Create a new site
+    description: >
+      Create a site within a project.
+    parameters:
+      - $ref: "./parameters.yaml#/projectParam"
+      - $ref: "./parameters.yaml#/siteParam"
+    requestBody:
+      content:
+        'application/json':
+          schema:
+            $ref: './schemas.yaml#/putSiteBody'
+          examples:
+            multiple-paths:
+              $ref: "./payloads.yaml#/putSiteExample"
+    responses:
+      '201':
+        description: Site created successfully.
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "./schemas.yaml#/sourceInfo"
+                - $ref: "./schemas.yaml#/codeInfo"
+                - $ref: "./schemas.yaml#/aemInfo"
+            examples:
+              success:
+                description: Success response of a site.
+                value:
+                  da:
+                    edit: "https://da.live/adobecom/blog"
+                    content: "https://view.da.live/adobecom/blog/"
+                  code:
+                    url: "https://github.com/adobecom/blog"
+                  aem: 
+                    preview: "https://main--blog--adobecom.hlx.page"
+                    live: "https://main--blog--adobecom.hlx.live"
+      '400':
+        $ref: "./responses.yaml#/400"
+      '500':
+        $ref: "./responses.yaml#/500"

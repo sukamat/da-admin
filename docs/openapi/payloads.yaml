@@ -1,0 +1,5 @@
+putSiteExample:
+  summary: Override inferred site details
+  value:
+    aemOrigin: 'https://main--blog--adobe.hlx.page'
+    prodOrigin: 'https://blog.adobe.com'

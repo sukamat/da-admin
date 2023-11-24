@@ -9,35 +9,28 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-  # x-logo:
-  #   url: https://redocly.github.io/openapi-template/logo.png
+  x-logo:
+    url: https://raw.githubusercontent.com/auniverseaway/da-admin/main/docs/openapi/img/da-logo.png
   description: >
     Dark Alley Admin is used to manage Dark Alley content repositories.
 
-# tags:
-#   - name: Echo
-#     description: Example echo operations.
-#   - name: User
-#     description: Operations about users.
-#   - name: Tag
-#     description: This is a tag description.
 servers:
-  - url: https://admin.da.live
-    variables:
-      tenant:
-        default: www
-        description: Your tenant id
+  # - url: https://admin.da.live
+  #   variables:
+  #     tenant:
+  #       default: www
+  #       description: Your tenant id
   - url: https://admin.da.live
 paths:
-  /project/{owner}/{repo}/{ref}/{path}:
-    $ref: "./project-api.yaml#/project"
-components:
-  securitySchemes:
-    AuthCookie:
-      type: apiKey
-      in: cookie
-      name: auth_token
-    BearerToken:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
+  /site/{project}/{site}:
+    $ref: "./site-api.yaml#/site"
+# components:
+#   securitySchemes:
+#     AuthCookie:
+#       type: apiKey
+#       in: cookie
+#       name: auth_token
+#     BearerToken:
+#       type: http
+#       scheme: bearer
+#       bearerFormat: JWT
