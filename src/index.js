@@ -1,18 +1,18 @@
-import { getAdminCtx } from './utils/adminCtx';
+import { getDaCtx } from './utils/daCtx';
 
 // Handlers
-import siteHandler from './site/handler';
+import sourceHandler from './source/handler';
 import docsHandler from './docs/handler';
 
 export default {
   async fetch(req, env, ctx) {
     const url = new URL(req.url);
-    const adminCtx = getAdminCtx(url.pathname);
+    const daCtx = getDaCtx(url.pathname);
 
-    if (adminCtx.api === 'site')
-      return siteHandler(req, env, adminCtx);
+    if (daCtx.api === 'source')
+      return sourceHandler(req, env, daCtx);
 
-    if (adminCtx.api === 'docs')
+    if (daCtx.api === 'docs')
       return docsHandler();
 
     return new Response('Not supported.');

@@ -1,5 +1,11 @@
-putSiteExample:
+putSourceJson:
   summary: Override inferred site details
   value:
-    aemOrigin: 'https://main--blog--adobe.hlx.page'
-    prodOrigin: 'https://blog.adobe.com'
+    data: <html><head><body></body></html>
+    metadata:
+      readyForLoc: true
+putSourceForm:
+  summary: Override site details
+  value: |
+    data: <binary>
+    metadata: '{"aemOrigin":"https://main--blog--adobecom.hlx.page"}'

@@ -19,17 +19,24 @@ refParam:
   required: true
   schema:
     type: string
-projectParam:
-  name: project
+daOwnerParam:
+  name: owner
   in: path
-  description: Name of project.
+  description: Name of the source owner.
   required: true
   schema:
     type: string
-siteParam:
-  name: site
+pathParam:
+  name: path
   in: path
-  description: Name of site.
+  description: Path to the source content.
   required: true
   schema:
     type: string
+headerParam:
+  name: x-da-metadata
+  in: header
+  schema:
+    type: string
+    example: '{"aemOrigin":"https://main--blog--adobecom.hlx.page"}'
+  description: Value to correlate API requests across systems.

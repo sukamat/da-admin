@@ -1,0 +1,96 @@
+sitesource:
+  get:
+    operationId: sourceDetails
+    tags:
+      - Source
+    summary: Source content status
+    description: Returns details about the content source.
+    parameters:
+      - $ref: "./parameters.yaml#/daOwnerParam"
+      - $ref: "./parameters.yaml#/pathParam"
+    responses:
+      '200':
+        description: The site details
+        content:
+          application/json:
+            schema:
+              allOf:
+                - $ref: "./schemas.yaml#/sourceInfo"
+                - $ref: "./schemas.yaml#/codeInfo"
+                - $ref: "./schemas.yaml#/aemInfo"
+            examples:
+              site:
+                description: Success response of a content source.
+                value:
+                  source:
+                    editUrl: "https://da.live/adobecom/blog"
+                    contentUrl: "https://content.da.live/adobecom/blog/"
+                    status: 200
+                  code:
+                    repoUrl: "https://github.com/adobecom/blog"
+                  aem: 
+                    previewUrl: "https://main--blog--adobecom.hlx.page"
+                    liveUrl: "https://main--blog--adobecom.hlx.live"
+      '400':
+        $ref: "./responses.yaml#/400"
+      '404':
+        $ref: "./responses.yaml#/404"
+  put:
+    operationId: createSite
+    tags:
+      - Source
+    summary: New source content
+    description: >
+      Create a content source within the owner's bucket.
+    parameters:
+      - $ref: "./parameters.yaml#/projectParam"
+      - $ref: "./parameters.yaml#/pathParam"
+      # - $ref: "./parameters.yaml#/headerParam"
+    # x-codeSamples:
+    #     - lang: 'cURL'
+    #       label: 'cURL'
+    #       source: |
+    #         curl --request POST \
+    #         --url 'https://data.apiexample.com/api/example/batch_query/json?format=json' \
+    #         --header 'content-type: application/octet-stream: ' \
+    #         --data '{}'
+    requestBody:
+      content:
+        application/json:
+          schema:
+            $ref: './schemas.yaml#/jsonSource'
+          examples:
+            json:
+              $ref: "./payloads.yaml#/putSourceJson"
+        multipart/form-data:
+          schema:
+            $ref: './schemas.yaml#/source'
+          examples:
+            json:
+              $ref: "./payloads.yaml#/putSourceForm"
+    # responses:
+    #   '201':
+    #     description: Site created successfully.
+    #     content:
+    #       application/json:
+    #         schema:
+    #           allOf:
+    #             - $ref: "./schemas.yaml#/sourceInfo"
+    #             - $ref: "./schemas.yaml#/codeInfo"
+    #             - $ref: "./schemas.yaml#/aemInfo"
+    #         examples:
+    #           success:
+    #             description: Success response of a content resource.
+    #             value:
+    #               source:
+    #                 editUrl: "https://da.live/adobecom/blog"
+    #                 contentUrl: "https://view.da.live/adobecom/blog/"
+    #               code:
+    #                 repoUrl: "https://github.com/adobecom/blog"
+    #               aem: 
+    #                 previewUrl: "https://main--blog--adobecom.hlx.page"
+    #                 liveUrl: "https://main--blog--adobecom.hlx.live"
+    #   '400':
+    #     $ref: "./responses.yaml#/400"
+    #   '500':
+    #     $ref: "./responses.yaml#/500"

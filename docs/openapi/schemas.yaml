@@ -1,13 +1,32 @@
 # Dark Alley
-putSiteBody:
-  description: Create site body
+source:
+  description: Create a content source.
+  allOf:
+    - required:
+        - data
   properties:
-    aemOrigin:
-      description: Use a different AEM origin than what is inferred from the path.
-      type: url
-    prodOrigin:
-      description: Use a different production origin than what is read from the repository sidekick config.
-      type: url
+    data:
+      description: The content to store at the specified location.
+      type: blob
+    metadata:
+      description: > 
+        The metadata associated with the content source.
+        <br>Should be a string encoded JSON object. Example:
+        <br>`{"aemOrigin":"https://main--blog--adobecom.aem.page"}`
+      type: string
+
+jsonSource:
+  description: Create site body
+  allOf:
+    - required:
+        - data
+  properties:
+    data:
+      description: The content to store at the specified location.
+      type: object
+    metadata:
+      description: The metadata associated with the content source.
+      type: object
 
 sourceInfo:
   required:

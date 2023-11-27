@@ -1,36 +1,18 @@
 openapi: 3.1.0
 info:
-  version: 1.0.0
+  version: 0.0.0.0.1
   title: Dark Alley Admin
-  # termsOfService: https://example.com/terms/
-  # contact:
-  #  email: contact@example.com
-  #  url: http://example.com/contact
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   x-logo:
     url: https://raw.githubusercontent.com/auniverseaway/da-admin/main/docs/openapi/img/da-logo.png
-  description: >
+  description: |
     Dark Alley Admin is used to manage Dark Alley content repositories.
 
 servers:
-  # - url: https://admin.da.live
-  #   variables:
-  #     tenant:
-  #       default: www
-  #       description: Your tenant id
   - url: https://admin.da.live
 paths:
-  /site/{project}/{site}:
-    $ref: "./site-api.yaml#/site"
-# components:
-#   securitySchemes:
-#     AuthCookie:
-#       type: apiKey
-#       in: cookie
-#       name: auth_token
-#     BearerToken:
-#       type: http
-#       scheme: bearer
-#       bearerFormat: JWT
+  /source/{owner}/{path}:
+    $ref: "./source-api.yaml#/sitesource"
+

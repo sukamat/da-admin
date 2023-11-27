@@ -3,12 +3,14 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
+  "type": "module",
   "directories": {
     "doc": "docs"
   },
   "scripts": {
     "docs:build": "npx @redocly/cli build-docs -o docs/index.html admin@v1",
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "docs:watch": "npx @redocly/cli preview-docs admin@v1",
+    "test": "c8 mocha --spec=test/**/*.test.js",
     "deploy": "wrangler deploy",
     "dev": "wrangler dev",
     "start": "wrangler dev"
@@ -17,6 +19,13 @@
   "license": "Apache-2.0",
   "devDependencies": {
     "@redocly/cli": "^1.4.1",
+    "c8": "^8.0.1",
+    "mocha": "^10.2.0",
     "wrangler": "^3.17.1"
+  },
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.456.0",
+    "@aws-sdk/lib-storage": "^3.456.0",
+    "@aws-sdk/s3-request-presigner": "^3.456.0"
   }
 }
