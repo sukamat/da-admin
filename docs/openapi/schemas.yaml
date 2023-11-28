@@ -8,24 +8,24 @@ source:
     data:
       description: The content to store at the specified location.
       type: blob
-    metadata:
+    props:
       description: > 
-        The metadata associated with the content source.
-        <br>Should be a string encoded JSON object. Example:
+        The properties associated with the content source.
+        <br>Should be string encoded JSON. Example:
         <br>`{"aemOrigin":"https://main--blog--adobecom.aem.page"}`
       type: string
 
 jsonSource:
   description: Create site body
-  allOf:
-    - required:
-        - data
+  # allOf:
+  #   - required:
+  #       - data
   properties:
     data:
       description: The content to store at the specified location.
       type: object
-    metadata:
-      description: The metadata associated with the content source.
+    props:
+      description: The properties associated with the content source.
       type: object
 
 sourceInfo:

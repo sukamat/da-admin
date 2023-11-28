@@ -2,10 +2,10 @@ putSourceJson:
   summary: Override inferred site details
   value:
     data: <html><head><body></body></html>
-    metadata:
+    props:
       readyForLoc: true
 putSourceForm:
   summary: Override site details
   value: |
     data: <binary>
-    metadata: '{"aemOrigin":"https://main--blog--adobecom.hlx.page"}'
+    props: '{"aemOrigin":"https://main--blog--adobecom.hlx.page"}'

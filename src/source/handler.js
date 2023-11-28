@@ -6,7 +6,7 @@ function defaultError(daCtx) {
 }
 
 function getFormEntries(formData) {
-  return formData.entries().reduce((acc, entry) => {
+  return [...formData.entries()].reduce((acc, entry) => {
     if (entry[0] === 'data') {
       acc.data = entry[1];
     }

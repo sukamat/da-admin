@@ -40,8 +40,13 @@ sitesource:
     tags:
       - Source
     summary: New source content
-    description: >
+    description: |
       Create a content source within the owner's bucket.
+      There are two supported request methods:
+
+      1. **JSON** - Useful to store text (HTML, JSON, etc.) documents or to store only properties for a given resource (including folders).
+      1. **Form** - Useful to store blobs while also providing the ability to store properties for a given resource.
+
     parameters:
       - $ref: "./parameters.yaml#/projectParam"
       - $ref: "./parameters.yaml#/pathParam"
