@@ -1,0 +1,17 @@
+list:
+  get:
+    operationId: listDetails
+    tags:
+      - List
+    summary: List sources - WIP
+    description: Returns a list of sources.
+    parameters:
+      - $ref: "./parameters.yaml#/daOwnerParam"
+      - $ref: "./parameters.yaml#/pathParam"
+    responses:
+      '200':
+        $ref: "./responses.yaml#/200-list"
+      '400':
+        $ref: "./responses.yaml#/400"
+      '404':
+        $ref: "./responses.yaml#/404"

@@ -47,8 +47,37 @@ sourceInfo:
             status:
               description: HTTP status response of the requested resource.
               type: number
+            props:
+              description: An object with key/value pairs.
+              type: object
             error:
               description: Error message when there was a problem.
+
+sourceList:
+  required:
+    - sources
+  properties:
+    sources:
+      description: List of sources
+      type: array
+      items:
+        required:
+          - editUrl
+          - contentUrl
+        type: object
+        properties:
+          editUrl:
+            description: The edit URL of the resource.
+            type: string
+            format: url
+          contentUrl:
+            description: The content URL of the resource. For a site, used in AEM fstab.yaml.
+            type: string
+            format: url
+          props:
+            description: The properties associated with the source.
+            type: object
+
 
 codeInfo:
   required:

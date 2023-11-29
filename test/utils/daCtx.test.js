@@ -7,7 +7,7 @@ describe('Dark Alley Context', () => {
     const daCtx = getDaCtx('/source/adobecom/blog');
 
     it('should return a key', () => {
-      assert.strictEqual(daCtx.key, 'blog/.daprops');
+      assert.strictEqual(daCtx.key, 'blog.props');
     });
   });
 
@@ -23,7 +23,7 @@ describe('Dark Alley Context', () => {
     });
 
     it('should return a key', () => {
-      assert.strictEqual(daCtx.key, 'blog/en/publish/.daprops');
+      assert.strictEqual(daCtx.key, 'blog/en/publish.props');
     });
   });
 
@@ -39,7 +39,7 @@ describe('Dark Alley Context', () => {
     });
 
     it('should return a props key', () => {
-      assert.strictEqual(daCtx.propsKey, 'blog/en/publish/picture.jpg/.daprops');
+      assert.strictEqual(daCtx.propsKey, 'blog/en/publish/picture.jpg.props');
     });
   });
 });

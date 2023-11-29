@@ -19,27 +19,28 @@ export function getDaCtx(pathname) {
   const sanitized = lower.endsWith('/') ? lower.slice(0, -1) : lower;
 
   // Get base details
-  const [api, org, site, ...parts] = sanitized.split('/');
+  const [api, org, ...parts] = sanitized.split('/');
 
   // Set base details
-  const daCtx = { api, org, site };
+  const daCtx = { api, org };
 
   // Sanitize the remaining path parts
   const path = parts.filter((part) => part !== '');
 
-  if (path.length === 0) {
-    daCtx.key = `${site}/.daprops`;
-    return daCtx;
-  }
-
+  // Determine the file name structure
   daCtx.name = path.slice(-1)[0];
   const split = daCtx.name.split('.');
   const hasExt = split.length > 1;
-  const keyBase = `${site}/${path.join('/')}`;
-  daCtx.key = hasExt ? keyBase : `${keyBase}/.daprops`;
+
+  // Set the base key
+  const keyBase = `${path.join('/')}`;
+
   if (hasExt) {
+    daCtx.key = keyBase;
     daCtx.ext = split.pop();
-    daCtx.propsKey = `${keyBase}/.daprops`;
+    daCtx.propsKey = `${keyBase}.props`;
+  } else {
+    daCtx.key = `${keyBase}.props`;
   }
 
   return daCtx;

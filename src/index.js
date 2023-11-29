@@ -1,21 +1,27 @@
-import { Hono } from 'hono';
-import { cors } from 'hono/cors';
-import putSourceHandler from './source/put';
+import { getDaCtx } from './utils/daCtx';
 
-const app = new Hono();
+import sourceHandler from './source/handler';
 
-app.use('/*', cors());
+import { get404, daResp, getRobots } from './responses';
 
-app.put('/source/*', async (c) => putSourceHandler(c));
+export default {
+  async fetch(req, env) {
+    const pathname = new URL(req.url).pathname;
 
-app.get('/source/*', async (c) => getSourceHandler(c));
+    if (pathname === '/favicon.ico') return get404();
+    if (pathname === '/robots.txt') return getRobots();
 
-app.get('/*', async (c) => {
-  return c.html('');
-});
+    const daCtx = getDaCtx(pathname);
 
-app.get('/docs*', async (c) => {
-  return c.html('');
-});
+    if (pathname.startsWith('/source')) {
+      const respProps = await sourceHandler(req, env, daCtx);
+      return daResp(respProps);
+    }
 
-export default app;
+    if (pathname.startsWith('/list')) {
+      // Do list things
+    }
+
+    return daResp({ body: '', status: 404 });
+  },
+};

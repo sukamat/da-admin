@@ -1,3 +1,88 @@
+'200':
+  description: The source details
+  content:
+    application/json:
+      schema:
+        allOf:
+          - $ref: "./schemas.yaml#/sourceInfo"
+          - $ref: "./schemas.yaml#/aemInfo"
+      examples:
+        success:
+          summary: Resource found
+          value:
+            source:
+              editUrl: "https://da.live/edit#/adobecom/blog/my-cool-post"
+              contentUrl: "https://content.da.live/adobecom/blog/my-cool-post"
+              status: 200
+              props:
+                readyForLoc: true
+                lastRollout: Wed, 29 Nov 2023 01:20:40 GMT
+            aem: 
+              previewUrl: "https://main--blog--adobecom.hlx.page/my-cool-post"
+              liveUrl: "https://main--blog--adobecom.hlx.live/my-cool-post"
+        fail:
+          summary: No resource found
+          value:
+            source:
+              status: 404
+            aem: 
+              previewUrl: "https://main--blog--adobecom.hlx.page/my-cool-post"
+              liveUrl: "https://main--blog--adobecom.hlx.live/my-cool-post"
+
+'200-list':
+  description: The list of sources
+  content:
+    application/json:
+      schema:
+        allOf:
+          - $ref: "./schemas.yaml#/sourceList"
+      examples:
+        # success:
+        #   summary: Resource found
+        #   value:
+        #     source:
+        #       editUrl: "https://da.live/edit#/adobecom/blog/my-cool-post"
+        #       contentUrl: "https://content.da.live/adobecom/blog/my-cool-post"
+        #       status: 200
+        #       props:
+        #         readyForLoc: true
+        #         lastRollout: Wed, 29 Nov 2023 01:20:40 GMT
+        #     aem: 
+        #       previewUrl: "https://main--blog--adobecom.hlx.page/my-cool-post"
+        #       liveUrl: "https://main--blog--adobecom.hlx.live/my-cool-post"
+        # fail:
+        #   summary: No resource found
+        #   value:
+        #     source:
+        #       status: 404
+        #     aem: 
+        #       previewUrl: "https://main--blog--adobecom.hlx.page/my-cool-post"
+        #       liveUrl: "https://main--blog--adobecom.hlx.live/my-cool-post"
+
+
+
+
+'201':
+  description: Source created successfully.
+  content:
+    application/json:
+      schema:
+        allOf:
+          - $ref: "./schemas.yaml#/sourceInfo"
+          - $ref: "./schemas.yaml#/aemInfo"
+      examples:
+        success:
+          value:
+            source:
+              editUrl: "https://da.live/edit#/adobecom/blog/my-cool-post"
+              contentUrl: "https://content.da.live/adobecom/blog/my-cool-post"
+              status: 201
+              props:
+                readyForLoc: true
+                lastRollout: Wed, 29 Nov 2023 01:20:40 GMT
+            aem: 
+              previewUrl: "https://main--blog--adobecom.hlx.page/my-cool-post"
+              liveUrl: "https://main--blog--adobecom.hlx.live/my-cool-post"
 '400':
   description: Invalid request url.
   headers:
@@ -18,7 +103,7 @@
     X-Error:
       $ref: "./headers.yaml#/xError"
 '409':
-  description: Conflict. The requested operation is not allowed by the current state of tte resource.
+  description: Conflict. The requested operation is not allowed by the current state of the resource.
   headers:
     X-Error:
       $ref: "./headers.yaml#/xError"

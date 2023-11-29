@@ -1,4 +1,4 @@
-sitesource:
+source:
   get:
     operationId: sourceDetails
     tags:
@@ -10,38 +10,7 @@ sitesource:
       - $ref: "./parameters.yaml#/pathParam"
     responses:
       '200':
-        description: The site details
-        content:
-          application/json:
-            schema:
-              allOf:
-                - $ref: "./schemas.yaml#/sourceInfo"
-                - $ref: "./schemas.yaml#/codeInfo"
-                - $ref: "./schemas.yaml#/aemInfo"
-            examples:
-              success:
-                summary: Resource found
-                description: Success response of a content source.
-                value:
-                  source:
-                    editUrl: "https://da.live/edit#/adobecom/blog/my-cool-post"
-                    contentUrl: "https://content.da.live/adobecom/blog/my-cool-post"
-                    status: 200
-                    properties:
-                      readyForLoc: true
-                      lastRollout: Wed, 29 Nov 2023 01:20:40 GMT
-                  aem: 
-                    previewUrl: "https://main--blog--adobecom.hlx.page/my-cool-post"
-                    liveUrl: "https://main--blog--adobecom.hlx.live/my-cool-post"
-              fail:
-                summary: No resource found
-                description: Success response of a content source.
-                value:
-                  source:
-                    status: 404
-                  aem: 
-                    previewUrl: "https://main--blog--adobecom.hlx.page/my-cool-post"
-                    liveUrl: "https://main--blog--adobecom.hlx.live/my-cool-post"
+        $ref: "./responses.yaml#/200"
       '400':
         $ref: "./responses.yaml#/400"
       '404':
@@ -59,17 +28,8 @@ sitesource:
       1. **Form** - Useful to store blobs while also providing the ability to store properties for a given resource.
 
     parameters:
-      - $ref: "./parameters.yaml#/projectParam"
+      - $ref: "./parameters.yaml#/daOwnerParam"
       - $ref: "./parameters.yaml#/pathParam"
-      # - $ref: "./parameters.yaml#/headerParam"
-    # x-codeSamples:
-    #     - lang: 'cURL'
-    #       label: 'cURL'
-    #       source: |
-    #         curl --request POST \
-    #         --url 'https://data.apiexample.com/api/example/batch_query/json?format=json' \
-    #         --header 'content-type: application/octet-stream: ' \
-    #         --data '{}'
     requestBody:
       content:
         application/json:
@@ -84,29 +44,10 @@ sitesource:
           examples:
             json:
               $ref: "./payloads.yaml#/putSourceForm"
-    # responses:
-    #   '201':
-    #     description: Site created successfully.
-    #     content:
-    #       application/json:
-    #         schema:
-    #           allOf:
-    #             - $ref: "./schemas.yaml#/sourceInfo"
-    #             - $ref: "./schemas.yaml#/codeInfo"
-    #             - $ref: "./schemas.yaml#/aemInfo"
-    #         examples:
-    #           success:
-    #             description: Success response of a content resource.
-    #             value:
-    #               source:
-    #                 editUrl: "https://da.live/adobecom/blog"
-    #                 contentUrl: "https://view.da.live/adobecom/blog/"
-    #               code:
-    #                 repoUrl: "https://github.com/adobecom/blog"
-    #               aem: 
-    #                 previewUrl: "https://main--blog--adobecom.hlx.page"
-    #                 liveUrl: "https://main--blog--adobecom.hlx.live"
-    #   '400':
-    #     $ref: "./responses.yaml#/400"
-    #   '500':
-    #     $ref: "./responses.yaml#/500"
+    responses:
+      '201':
+        $ref: "./responses.yaml#/201"
+      '400':
+        $ref: "./responses.yaml#/400"
+      '500':
+        $ref: "./responses.yaml#/500"

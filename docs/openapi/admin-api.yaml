@@ -14,5 +14,7 @@ servers:
   - url: https://admin.da.live
 paths:
   /source/{owner}/{path}:
-    $ref: "./source-api.yaml#/sitesource"
+    $ref: "./source-api.yaml#/source"
+  /list/{owner}/{path}:
+    $ref: "./list-api.yaml#/list"
 

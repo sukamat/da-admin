@@ -1,10 +1,9 @@
 import {
   S3Client,
-  GetObjectCommand,
   PutObjectCommand,
 } from '@aws-sdk/client-s3';
 
-import getS3Config from './utils';
+import getS3Config from '../utils';
 
 async function getFileBody(data) {
   await data.text();
@@ -33,7 +32,7 @@ function createBucketIfMissing(client) {
   });
 }
 
-export async function putObject(env, daCtx, obj) {
+export default async function putObject(env, daCtx, obj) {
   const config = getS3Config(env);
   const client = new S3Client(config);
 
@@ -64,21 +63,8 @@ export async function putObject(env, daCtx, obj) {
 
   for (const input of inputs) {
     const command = new PutObjectCommand(input);
-    const fileResult = await client.send(command);
+    await client.send(command);
   }
 
-  return inputs;
-}
-
-export function getObject(env, daCtx) {
-  const config = getS3Config(env);
-  const client = new S3Client(config);
-
-  const input = buildInput(daCtx);
-  const command = new GetObjectCommand(input);
-  return client.send(command);
-
-  // const input = { Bucket: daCtx.org, Key: daCtx.pathname };
-  // const command = new GetObjectCommand(input);
-  // return client.send(command);
+  return { body: '', status: 200, contentType: 'application/json' };
 }
