@@ -4,8 +4,14 @@ putSourceJson:
     data: <html><head><body></body></html>
     props:
       readyForLoc: true
+      lastRollout: 'Wed, 29 Nov 2023 01:20:40 GMT'
+      timesAskedWhyNoNesting: 492
 putSourceForm:
   summary: Override site details
   value: |
     data: <binary>
-    props: '{"aemOrigin":"https://main--blog--adobecom.hlx.page"}'
+    props: `{
+        "aemOrigin":"https://main--blog--adobecom.hlx.page",
+        "readForLoc": true,
+        "lastRollout": "Wed, 29 Nov 2023 01:20:40 GMT"
+      }`

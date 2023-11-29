@@ -1,20 +1,21 @@
-import { getDaCtx } from './utils/daCtx';
+import { Hono } from 'hono';
+import { cors } from 'hono/cors';
+import putSourceHandler from './source/put';
 
-// Handlers
-import sourceHandler from './source/handler';
-import docsHandler from './docs/handler';
+const app = new Hono();
 
-export default {
-  async fetch(req, env, ctx) {
-    const url = new URL(req.url);
-    const daCtx = getDaCtx(url.pathname);
+app.use('/*', cors());
 
-    if (daCtx.api === 'source')
-      return sourceHandler(req, env, daCtx);
+app.put('/source/*', async (c) => putSourceHandler(c));
 
-    if (daCtx.api === 'docs')
-      return docsHandler();
+app.get('/source/*', async (c) => getSourceHandler(c));
 
-    return new Response('Not supported.');
-  },
-};
+app.get('/*', async (c) => {
+  return c.html('');
+});
+
+app.get('/docs*', async (c) => {
+  return c.html('');
+});
+
+export default app;

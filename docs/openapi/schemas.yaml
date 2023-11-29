@@ -1,9 +1,6 @@
 # Dark Alley
 source:
   description: Create a content source.
-  allOf:
-    - required:
-        - data
   properties:
     data:
       description: The content to store at the specified location.
@@ -11,15 +8,12 @@ source:
     props:
       description: > 
         The properties associated with the content source.
-        <br>Should be string encoded JSON. Example:
+        <br>Should be a string encoded object of key/value pairs. Example:
         <br>`{"aemOrigin":"https://main--blog--adobecom.aem.page"}`
       type: string
 
 jsonSource:
   description: Create site body
-  # allOf:
-  #   - required:
-  #       - data
   properties:
     data:
       description: The content to store at the specified location.
@@ -27,6 +21,8 @@ jsonSource:
     props:
       description: The properties associated with the content source.
       type: object
+      additionalProperties:
+        type: [string, number, boolean]
 
 sourceInfo:
   required:

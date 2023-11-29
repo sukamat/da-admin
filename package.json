@@ -11,8 +11,8 @@
     "docs:build": "npx @redocly/cli build-docs -o docs/index.html admin@v1",
     "docs:watch": "npx @redocly/cli preview-docs admin@v1",
     "test": "c8 mocha --spec=test/**/*.test.js",
-    "deploy": "wrangler deploy",
-    "dev": "wrangler dev",
+    "dev": "wrangler dev src/index.js",
+    "deploy": "wrangler deploy src/index.js",
     "start": "wrangler dev"
   },
   "author": "",
@@ -26,6 +26,7 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.456.0",
     "@aws-sdk/lib-storage": "^3.456.0",
-    "@aws-sdk/s3-request-presigner": "^3.456.0"
+    "@aws-sdk/s3-request-presigner": "^3.456.0",
+    "hono": "^3.10.2"
   }
 }

@@ -19,18 +19,29 @@ sitesource:
                 - $ref: "./schemas.yaml#/codeInfo"
                 - $ref: "./schemas.yaml#/aemInfo"
             examples:
-              site:
+              success:
+                summary: Resource found
                 description: Success response of a content source.
                 value:
                   source:
-                    editUrl: "https://da.live/adobecom/blog"
-                    contentUrl: "https://content.da.live/adobecom/blog/"
+                    editUrl: "https://da.live/edit#/adobecom/blog/my-cool-post"
+                    contentUrl: "https://content.da.live/adobecom/blog/my-cool-post"
                     status: 200
-                  code:
-                    repoUrl: "https://github.com/adobecom/blog"
+                    properties:
+                      readyForLoc: true
+                      lastRollout: Wed, 29 Nov 2023 01:20:40 GMT
                   aem: 
-                    previewUrl: "https://main--blog--adobecom.hlx.page"
-                    liveUrl: "https://main--blog--adobecom.hlx.live"
+                    previewUrl: "https://main--blog--adobecom.hlx.page/my-cool-post"
+                    liveUrl: "https://main--blog--adobecom.hlx.live/my-cool-post"
+              fail:
+                summary: No resource found
+                description: Success response of a content source.
+                value:
+                  source:
+                    status: 404
+                  aem: 
+                    previewUrl: "https://main--blog--adobecom.hlx.page/my-cool-post"
+                    liveUrl: "https://main--blog--adobecom.hlx.live/my-cool-post"
       '400':
         $ref: "./responses.yaml#/400"
       '404':
