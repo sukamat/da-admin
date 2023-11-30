@@ -4,9 +4,11 @@ import {
 } from '@aws-sdk/client-s3';
 
 import getS3Config from '../utils';
+import { sourceRespObject } from '../../source/helpers';
 
 async function getFileBody(data) {
   await data.text();
+  console.log(data);
   return { body: data, type: data.type };
 }
 
@@ -66,5 +68,6 @@ export default async function putObject(env, daCtx, obj) {
     await client.send(command);
   }
 
-  return { body: '', status: 200, contentType: 'application/json' };
+  const body = sourceRespObject(daCtx, obj?.props);
+  return { body: JSON.stringify(body), status: 201, contentType: 'application/json' };
 }

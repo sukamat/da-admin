@@ -8,6 +8,8 @@
  * @property {String} ext - The name of the extension.
  */
 
+const REMOVE_EXT = ['props', 'html'];
+
 /**
  * Gets Dark Alley Context
  * @param {pathname} pathname
@@ -19,28 +21,47 @@ export function getDaCtx(pathname) {
   const sanitized = lower.endsWith('/') ? lower.slice(0, -1) : lower;
 
   // Get base details
-  const [api, org, ...parts] = sanitized.split('/');
+  const [api, org, site, ...parts] = sanitized.split('/');
 
   // Set base details
-  const daCtx = { api, org };
+  const daCtx = { api, org, site };
 
   // Sanitize the remaining path parts
   const path = parts.filter((part) => part !== '');
+  const keyBase = `${site}/${path.join('/')}`;
 
-  // Determine the file name structure
-  daCtx.name = path.slice(-1)[0];
-  const split = daCtx.name.split('.');
-  const hasExt = split.length > 1;
+  // Handle root site creations
+  daCtx.filename = path.pop();
+  if (!daCtx.filename) {
+    daCtx.isFile = false;
+    daCtx.ext = 'props';
+    daCtx.name = null;
+    daCtx.key = `${site}.props`;
+    daCtx.pathname = `/${site}`;
+    daCtx.aemPathname = `/`;
+    return daCtx;
+  }
 
-  // Set the base key
-  const keyBase = `${path.join('/')}`;
+  // Handle folders and files under a site
+  const split = daCtx.filename.split('.');
+  daCtx.isFile = split.length > 1;
+  daCtx.ext = daCtx.isFile ? split.pop() : 'props';
+  daCtx.name = split.join('.');
 
-  if (hasExt) {
-    daCtx.key = keyBase;
-    daCtx.ext = split.pop();
-    daCtx.propsKey = `${keyBase}.props`;
+  // Set keys
+  daCtx.key = daCtx.isFile ? keyBase : `${keyBase}.props`;
+  if (daCtx.isFile) daCtx.propsKey = `${daCtx.key}.props`;
+
+  // Set paths for API consumption
+  const aemPathBase = [...path, daCtx.name].join('/');
+  const daPathBase = [site, ...path, daCtx.name].join('/');
+
+  if (REMOVE_EXT.some((ext) => ext === daCtx.ext)) {
+    daCtx.pathname = `/${daPathBase}`;
+    daCtx.aemPathname = `/${aemPathBase}`;
   } else {
-    daCtx.key = `${keyBase}.props`;
+    daCtx.pathname = `/${daPathBase}.${daCtx.ext}`;
+    daCtx.aemPathname = `/${aemPathBase}.${daCtx.ext}`;
   }
 
   return daCtx;

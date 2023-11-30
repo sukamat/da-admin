@@ -1,5 +1,25 @@
 import { FORM_TYPES } from '../utils/constants';
 
+/**
+ * Builds a source response
+ * @param {*} key 
+ */
+export function sourceRespObject(daCtx, props) {
+  console.log(daCtx);
+  const { org, site, isFile, pathname, aemPathname } = daCtx;
+  return {
+      source: {
+        editUrl: `https://da.live/${isFile ? 'edit#/' : ''}${org}${pathname}`,
+        contentUrl: `https://content.da.live/${org}${pathname}`,
+        props,
+      },
+      aem: {
+        previewUrl: `https://main--${site}--${org}.hlx.page${aemPathname}`,
+        liveUrl: `https://main--${site}--${org}.hlx.live${aemPathname}`,
+      }
+  }
+}
+
 function getFormEntries(formData) {
   return formData.entries().reduce((acc, entry) => {
     if (entry[0] === 'data') {
