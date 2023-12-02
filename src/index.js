@@ -1,6 +1,7 @@
 import { getDaCtx } from './utils/daCtx';
 
 import sourceHandler from './source/handler';
+import listHandler from './list/handler';
 
 import { get404, daResp, getRobots } from './responses';
 
@@ -19,7 +20,8 @@ export default {
     }
 
     if (pathname.startsWith('/list')) {
-      // Do list things
+      const respProps = await listHandler(req, env, daCtx);
+      return daResp(respProps);
     }
 
     return daResp({ body: '', status: 404 });

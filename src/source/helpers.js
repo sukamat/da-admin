@@ -5,31 +5,39 @@ import { FORM_TYPES } from '../utils/constants';
  * @param {*} key 
  */
 export function sourceRespObject(daCtx, props) {
-  console.log(daCtx);
   const { org, site, isFile, pathname, aemPathname } = daCtx;
-  return {
+
+  const obj = {
       source: {
         editUrl: `https://da.live/${isFile ? 'edit#/' : ''}${org}${pathname}`,
         contentUrl: `https://content.da.live/${org}${pathname}`,
-        props,
-      },
-      aem: {
-        previewUrl: `https://main--${site}--${org}.hlx.page${aemPathname}`,
-        liveUrl: `https://main--${site}--${org}.hlx.live${aemPathname}`,
       }
   }
+
+  if (props) obj.source.props = props;
+
+  if (site) {
+    obj.aem = {
+      previewUrl: `https://main--${site}--${org}.hlx.page${aemPathname}`,
+      liveUrl: `https://main--${site}--${org}.hlx.live${aemPathname}`,
+    }
+  }
+
+  return obj;
 }
 
 function getFormEntries(formData) {
-  return formData.entries().reduce((acc, entry) => {
-    if (entry[0] === 'data') {
-      acc.data = entry[1];
-    }
-    if (entry[0] === 'props') {
-      acc.props = JSON.parse(entry[1]);
-    }
-    return acc;
-  }, {});
+  const entries = {};
+
+  if (formData.get('data')) {
+    entries.data = formData.get('data');
+  }
+
+  if (formData.get('props')) {
+    entries.props = JSON.parse(formData.get('props'));
+  }
+
+  return entries
 }
 
 async function formPutHandler(req) {

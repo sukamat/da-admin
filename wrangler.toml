@@ -1,3 +1,3 @@
 name = "da-admin"
 main = "src/index.js"
-compatibility_date = "2023-11-21"
+compatibility_date = "2023-10-30"

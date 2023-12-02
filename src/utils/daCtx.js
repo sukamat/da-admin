@@ -21,26 +21,19 @@ export function getDaCtx(pathname) {
   const sanitized = lower.endsWith('/') ? lower.slice(0, -1) : lower;
 
   // Get base details
-  const [api, org, site, ...parts] = sanitized.split('/');
+  const [api, org, ...parts] = sanitized.split('/');
 
   // Set base details
-  const daCtx = { api, org, site };
+  const daCtx = { api, org };
 
   // Sanitize the remaining path parts
   const path = parts.filter((part) => part !== '');
-  const keyBase = `${site}/${path.join('/')}`;
+  const keyBase = path.join('/');
 
-  // Handle root site creations
-  daCtx.filename = path.pop();
-  if (!daCtx.filename) {
-    daCtx.isFile = false;
-    daCtx.ext = 'props';
-    daCtx.name = null;
-    daCtx.key = `${site}.props`;
-    daCtx.pathname = `/${site}`;
-    daCtx.aemPathname = `/`;
-    return daCtx;
-  }
+  // Get the final source name
+  daCtx.filename = path.pop() || '';
+
+  daCtx.site = path[0];
 
   // Handle folders and files under a site
   const split = daCtx.filename.split('.');
@@ -49,12 +42,14 @@ export function getDaCtx(pathname) {
   daCtx.name = split.join('.');
 
   // Set keys
-  daCtx.key = daCtx.isFile ? keyBase : `${keyBase}.props`;
-  if (daCtx.isFile) daCtx.propsKey = `${daCtx.key}.props`;
+  daCtx.key = keyBase;
+  daCtx.propsKey = `${daCtx.key}.props`;
 
   // Set paths for API consumption
-  const aemPathBase = [...path, daCtx.name].join('/');
-  const daPathBase = [site, ...path, daCtx.name].join('/');
+  const aemParts = daCtx.site ? path.slice(1) : path;
+  const aemPathBase = [...aemParts, daCtx.name].join('/');
+  
+  const daPathBase = [...path, daCtx.name].join('/');
 
   if (REMOVE_EXT.some((ext) => ext === daCtx.ext)) {
     daCtx.pathname = `/${daPathBase}`;
