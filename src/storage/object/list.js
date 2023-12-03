@@ -14,6 +14,12 @@ function buildInput({ org, key }) {
 }
 
 function combineCommonContents(resp, daCtx) {
+  function compare(a, b) {
+    if (a.name < b.name ) return -1;
+    if ( a.name > b.name ) return 1;
+    return 0;
+  }
+
   const { CommonPrefixes, Contents } = resp;
 
   const combined = [];
@@ -42,13 +48,14 @@ function combineCommonContents(resp, daCtx) {
         // Only show true files not hidden files (.props)
         if (splitName[0]) {
           const ext = splitName.pop();
-          combined.push({ path: `/${daCtx.org}/${content.Key}`, name, ext, isFile: true });
+          const isFile = splitName.length > 0;
+          combined.push({ path: `/${daCtx.org}/${content.Key}`, name, ext, isFile });
         }
       }
     });
   }
 
-  return combined;
+  return combined.sort(compare);
 }
 
 export default async function getObjects(env, daCtx) {
