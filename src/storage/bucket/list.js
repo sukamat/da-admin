@@ -5,6 +5,16 @@ import {
 
 import getS3Config from '../utils';
 
+function formatBuckets(buckets) {
+  console.log(buckets);
+  return buckets.map((bucket) => {
+    return {
+      name: bucket.Name.replace('-content', ''),
+      created: bucket.CreationDate
+    };
+  })
+}
+
 export default async function listBuckets(env, daCtx) {
   const config = getS3Config(env);
   const client = new S3Client(config);
@@ -13,7 +23,7 @@ export default async function listBuckets(env, daCtx) {
   try {
     const resp = await client.send(command);
     return {
-      body: JSON.stringify(resp.Buckets),
+      body: JSON.stringify(formatBuckets(resp.Buckets)),
       status: resp.$metadata.httpStatusCode,
       contentType: resp.ContentType
     };
