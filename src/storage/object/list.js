@@ -40,7 +40,7 @@ function combineCommonContents(resp, daCtx) {
 
   if (Contents) {
     Contents.forEach((content) => {
-      if (!content.Key.endsWith('.props')) {
+      
         const name = content.Key.split('/').pop();
         if (!name) return;
         // Do this on the server now because one day (?!) this should be done with content types.
@@ -48,10 +48,10 @@ function combineCommonContents(resp, daCtx) {
         // Only show true files not hidden files (.props)
         if (splitName[0]) {
           const ext = splitName.pop();
-          const isFile = splitName.length > 0;
+          const isFile = splitName.length > 0 && ext !== 'props';
           combined.push({ path: `/${daCtx.org}/${content.Key}`, name, ext, isFile });
         }
-      }
+
     });
   }
 

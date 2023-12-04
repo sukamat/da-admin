@@ -35,6 +35,7 @@ function createBucketIfMissing(client) {
 }
 
 export default async function putObject(env, daCtx, obj) {
+  console.log(daCtx);
   const config = getS3Config(env);
   const client = new S3Client(config);
 
@@ -57,9 +58,10 @@ export default async function putObject(env, daCtx, obj) {
       inputs.push(buildInput(inputConfig));
     }
   } else {
+    console.log(propsKey);
     // Make a bare bones folder
     const { body, type } = getObjectBody({});
-    const inputConfig = { org, key, body, type };
+    const inputConfig = { org, key: propsKey, body, type };
     inputs.push(buildInput(inputConfig));
   }
 
