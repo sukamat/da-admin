@@ -3,7 +3,7 @@ import {
   GetObjectCommand,
 } from '@aws-sdk/client-s3';
 
-import getS3Config from '../utils';
+import getS3Config from '../utils/config';
 
 function buildInput({ org, key }) {
   const Bucket = `${org}-content`;

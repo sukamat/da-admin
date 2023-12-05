@@ -8,8 +8,6 @@
  * @property {String} ext - The name of the extension.
  */
 
-const REMOVE_EXT = ['props', 'html'];
-
 /**
  * Gets Dark Alley Context
  * @param {pathname} pathname
@@ -38,7 +36,7 @@ export function getDaCtx(pathname) {
   // Handle folders and files under a site
   const split = daCtx.filename.split('.');
   daCtx.isFile = split.length > 1;
-  daCtx.ext = daCtx.isFile ? split.pop() : 'props';
+  if (daCtx.isFile) daCtx.ext = split.pop();
   daCtx.name = split.join('.');
 
   // Set keys
@@ -51,7 +49,7 @@ export function getDaCtx(pathname) {
   
   const daPathBase = [...path, daCtx.name].join('/');
 
-  if (REMOVE_EXT.some((ext) => ext === daCtx.ext)) {
+  if (!daCtx.ext || daCtx.ext === 'html') {
     daCtx.pathname = `/${daPathBase}`;
     daCtx.aemPathname = `/${aemPathBase}`;
   } else {

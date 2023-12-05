@@ -3,7 +3,7 @@ import {
   ListBucketsCommand,
 } from '@aws-sdk/client-s3';
 
-import getS3Config from '../utils';
+import getS3Config from '../utils/config';
 
 function formatBuckets(buckets) {
   console.log(buckets);

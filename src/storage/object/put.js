@@ -3,12 +3,11 @@ import {
   PutObjectCommand,
 } from '@aws-sdk/client-s3';
 
-import getS3Config from '../utils';
+import getS3Config from '../utils/config';
 import { sourceRespObject } from '../../source/helpers';
 
 async function getFileBody(data) {
   await data.text();
-  console.log(data);
   return { body: data, type: data.type };
 }
 
@@ -35,7 +34,6 @@ function createBucketIfMissing(client) {
 }
 
 export default async function putObject(env, daCtx, obj) {
-  console.log(daCtx);
   const config = getS3Config(env);
   const client = new S3Client(config);
 
@@ -58,8 +56,6 @@ export default async function putObject(env, daCtx, obj) {
       inputs.push(buildInput(inputConfig));
     }
   } else {
-    console.log(propsKey);
-    // Make a bare bones folder
     const { body, type } = getObjectBody({});
     const inputConfig = { org, key: propsKey, body, type };
     inputs.push(buildInput(inputConfig));
