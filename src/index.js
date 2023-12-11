@@ -4,6 +4,7 @@ import sourceHandler from './source/handler';
 import listHandler from './list/handler';
 
 import { get404, daResp, getRobots } from './responses';
+import copyHandler from './copy/handler';
 
 export default {
   async fetch(req, env) {
@@ -21,6 +22,11 @@ export default {
 
     if (pathname.startsWith('/list')) {
       const respProps = await listHandler(req, env, daCtx);
+      return daResp(respProps);
+    }
+
+    if (pathname.startsWith('/copy')) {
+      const respProps = await copyHandler(req, env, daCtx);
       return daResp(respProps);
     }
 

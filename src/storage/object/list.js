@@ -14,7 +14,7 @@ function buildInput({ org, key }) {
   };
 }
 
-export default async function getObjects(env, daCtx) {
+export default async function listObjects(env, daCtx) {
   const config = getS3Config(env);
   const client = new S3Client(config);
 

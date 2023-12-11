@@ -50,7 +50,5 @@ export default function formatList(resp, daCtx) {
     });
   }
 
-  const sorted = combined.sort(compare);
-  console.log(sorted);
-  return sorted;
+  return combined.sort(compare);
 }
