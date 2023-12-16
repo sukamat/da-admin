@@ -8,12 +8,32 @@
  * @property {String} ext - The name of the extension.
  */
 
+import getObject from '../storage/object/get';
+import getUser from './auth';
+
+async function getOrgProps(env, org, user) {
+  if (org) {
+    const { body } = await getObject(env, { org, key: '.props' });
+    if (!body) return;
+
+    const props = await new Response(body).json();
+    const admins = props['admin.role.all'];
+    if (!admins) return;
+
+    const authorized = admins.some((orgUser) => orgUser === user.email);
+    return { authorized };
+  }
+  return { authorized: true };
+}
+
 /**
  * Gets Dark Alley Context
  * @param {pathname} pathname
  * @returns {DaCtx} The Dark Alley Context.
  */
-export function getDaCtx(pathname) {
+export async function getDaCtx(pathname, req, env) {
+  const user = await getUser(req, env);
+
   // Santitize the string
   const lower = pathname.slice(1).toLowerCase();
   const sanitized = lower.endsWith('/') ? lower.slice(0, -1) : lower;
@@ -21,8 +41,11 @@ export function getDaCtx(pathname) {
   // Get base details
   const [api, org, ...parts] = sanitized.split('/');
 
+  // Get org properties
+  // const { authorized } = await getOrgProps(env, org, user);
+
   // Set base details
-  const daCtx = { api, org };
+  const daCtx = { api, org, user };
 
   // Sanitize the remaining path parts
   const path = parts.filter((part) => part !== '');
@@ -56,6 +79,8 @@ export function getDaCtx(pathname) {
     daCtx.pathname = `/${daPathBase}.${daCtx.ext}`;
     daCtx.aemPathname = `/${aemPathBase}.${daCtx.ext}`;
   }
+
+  console.log(daCtx);
 
   return daCtx;
 }

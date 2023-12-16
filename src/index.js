@@ -2,6 +2,7 @@ import { getDaCtx } from './utils/daCtx';
 
 import sourceHandler from './source/handler';
 import listHandler from './list/handler';
+import authHandler from './auth/handler';
 
 import { get404, daResp, getRobots } from './responses';
 import copyHandler from './copy/handler';
@@ -13,7 +14,7 @@ export default {
     if (pathname === '/favicon.ico') return get404();
     if (pathname === '/robots.txt') return getRobots();
 
-    const daCtx = getDaCtx(pathname);
+    const daCtx = await getDaCtx(pathname, req, env);
 
     if (pathname.startsWith('/source')) {
       const respProps = await sourceHandler(req, env, daCtx);
@@ -27,6 +28,11 @@ export default {
 
     if (pathname.startsWith('/copy')) {
       const respProps = await copyHandler(req, env, daCtx);
+      return daResp(respProps);
+    }
+
+    if (pathname.startsWith('/auth')) {
+      const respProps = await authHandler(req, env, daCtx);
       return daResp(respProps);
     }
 

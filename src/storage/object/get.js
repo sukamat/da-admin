@@ -10,11 +10,12 @@ function buildInput({ org, key }) {
   return { Bucket, Key: key };
 }
 
-export default async function getObject(env, daCtx) {
+export default async function getObject(env, { org, key }) {
+  console.log(org, key);
   const config = getS3Config(env);
   const client = new S3Client(config);
 
-  const input = buildInput(daCtx);
+  const input = buildInput({ org, key });
   const command = new GetObjectCommand(input);
 
   try {
