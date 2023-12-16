@@ -12,18 +12,20 @@ import getObject from '../storage/object/get';
 import getUser from './auth';
 
 async function getOrgProps(env, org, user) {
-  if (org) {
-    const { body } = await getObject(env, { org, key: '.props' });
-    if (!body) return;
+  const DEFAULT_AUTH = { authorized: true };
+  if (!org) return DEFAULT_AUTH;
 
-    const props = await new Response(body).json();
-    const admins = props['admin.role.all'];
-    if (!admins) return;
+  const propsVal = await env.DA_AUTH.get(`${org}-da-props`);
+  if (!propsVal) return DEFAULT_AUTH;
 
-    const authorized = admins.some((orgUser) => orgUser === user.email);
-    return { authorized };
-  }
-  return { authorized: true };
+  const props = JSON.parse(propsVal);
+  if (!props) return DEFAULT_AUTH;
+
+  const admins = props['admin.role.all'];
+  if (!admins) return DEFAULT_AUTH;
+
+  const authorized = admins.some((orgUser) => orgUser === user.email);
+  return { authorized };
 }
 
 /**
@@ -41,11 +43,14 @@ export async function getDaCtx(pathname, req, env) {
   // Get base details
   const [api, org, ...parts] = sanitized.split('/');
 
-  // Get org properties
-  // const { authorized } = await getOrgProps(env, org, user);
-
   // Set base details
   const daCtx = { api, org, user };
+
+  // Get org properties
+  if (org) {
+    const { authorized } = await getOrgProps(env, org, user);
+    daCtx.authorized = authorized;
+  }
 
   // Sanitize the remaining path parts
   const path = parts.filter((part) => part !== '');
@@ -69,7 +74,6 @@ export async function getDaCtx(pathname, req, env) {
   // Set paths for API consumption
   const aemParts = daCtx.site ? path.slice(1) : path;
   const aemPathBase = [...aemParts, daCtx.name].join('/');
-  
   const daPathBase = [...path, daCtx.name].join('/');
 
   if (!daCtx.ext || daCtx.ext === 'html') {

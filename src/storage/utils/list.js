@@ -43,6 +43,8 @@ export default function formatList(resp, daCtx) {
        content.Key = content.Key.replace('.props', '');
       }
 
+      // Do not show any hidden files.
+      if (!name) return;
       const item = { path: `/${daCtx.org}/${content.Key}`, name };
       if (ext !== 'props') item.ext = ext;
 
