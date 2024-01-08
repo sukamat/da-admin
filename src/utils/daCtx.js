@@ -19,6 +19,7 @@ async function getOrgProps(env, org, user) {
   if (!propsVal) return DEFAULT_AUTH;
 
   const props = JSON.parse(propsVal);
+  console.log(props);
   if (!props) return DEFAULT_AUTH;
 
   const admins = props['admin.role.all'];
@@ -35,6 +36,8 @@ async function getOrgProps(env, org, user) {
  */
 export async function getDaCtx(pathname, req, env) {
   const user = await getUser(req, env);
+
+  console.log(user);
 
   // Santitize the string
   const lower = pathname.slice(1).toLowerCase();
@@ -83,8 +86,6 @@ export async function getDaCtx(pathname, req, env) {
     daCtx.pathname = `/${daPathBase}.${daCtx.ext}`;
     daCtx.aemPathname = `/${aemPathBase}.${daCtx.ext}`;
   }
-
-  console.log(daCtx);
 
   return daCtx;
 }
