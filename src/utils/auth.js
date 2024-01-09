@@ -1,13 +1,13 @@
 import { decodeJwt } from 'jose';
 
-async function setUser(user_id, headers, env) {
+async function setUser(user_id, expiration, headers, env) {
   const resp = await fetch(`${env.IMS_ORIGIN}/ims/profile/v1`, { headers });
   const json = await resp.json();
 
   console.log(json);
 
   const value = JSON.stringify({ email: json.email });
-  await env.DA_AUTH.put(user_id, value);
+  await env.DA_AUTH.put(user_id, value, { expiration });
   return value;
 }
 
@@ -29,7 +29,7 @@ export default async function getUser(req, env) {
       // Find the user
       let user = await env.DA_AUTH.get(user_id);
       // If not found, create them
-      if (!user) user = await setUser(user_id, req.headers, env);
+      if (!user) user = await setUser(user_id, expires, req.headers, env);
       // If something went wrong, die.
       if (!user) return;
       return JSON.parse(user);
