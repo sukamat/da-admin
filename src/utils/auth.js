@@ -1,16 +1,5 @@
 import { decodeJwt } from 'jose';
 
-function decodeHeader(req) {
-  const authHeader = req.headers.get('authorization');
-  if (authHeader) {
-    const token = req.headers.get('authorization').split(' ').pop();
-    if (!token) return;
-
-    return decodeJwt(token);
-  }
-  return {};
-}
-
 async function setUser(user_id, expiration, headers, env) {
   const resp = await fetch(`${env.IMS_ORIGIN}/ims/profile/v1`, { headers });
   const json = await resp.json();
@@ -22,16 +11,17 @@ async function setUser(user_id, expiration, headers, env) {
   return value;
 }
 
-export async function logout(req, env) {
-  const { user_id } = decodeHeader(req);
-  if (user_id) {
-    await env.DA_AUTH.delete(user_id);
-  }
-}
-
 export async function getUser(req, env) {
-  const { user_id, created_at, expires_in } = decodeHeader(req);
-  if (user_id) {
+  const authHeader = req.headers.get('authorization');
+  if (authHeader) {
+    const token = req.headers.get('authorization').split(' ').pop();
+    if (!token) return;
+
+    console.log(decodeJwt(token));
+
+    const { user_id, created_at, expires_in } = decodeJwt(token);
+    console.log(user_id, created_at, expires_in);
+
     const expires = Number(created_at) + Number(expires_in);
     const now = Math.floor(new Date().getTime() / 1000);
 
