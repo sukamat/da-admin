@@ -9,25 +9,7 @@
  */
 
 import getObject from '../storage/object/get';
-import getUser from './auth';
-
-async function getOrgProps(env, org, user) {
-  const DEFAULT_AUTH = { authorized: true };
-  if (!org) return DEFAULT_AUTH;
-
-  const propsVal = await env.DA_AUTH.get(`${org}-da-props`);
-  if (!propsVal) return DEFAULT_AUTH;
-
-  const props = JSON.parse(propsVal);
-  console.log(props);
-  if (!props) return DEFAULT_AUTH;
-
-  const admins = props['admin.role.all'];
-  if (!admins) return DEFAULT_AUTH;
-
-  const authorized = admins.some((orgUser) => orgUser === user.email);
-  return { authorized };
-}
+import { getUser, isAuthorized } from './auth';
 
 /**
  * Gets Dark Alley Context
@@ -51,8 +33,7 @@ export async function getDaCtx(pathname, req, env) {
 
   // Get org properties
   if (org) {
-    const { authorized } = await getOrgProps(env, org, user);
-    daCtx.authorized = authorized;
+    daCtx.authorized = await isAuthorized(env, org, user);
   }
 
   // Sanitize the remaining path parts

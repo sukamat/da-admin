@@ -4,15 +4,21 @@ import {
 } from '@aws-sdk/client-s3';
 
 import getS3Config from '../utils/config';
+import { isAuthorized } from '../../utils/auth';
 
-function formatBuckets(buckets) {
-  console.log(buckets);
-  return buckets.map((bucket) => {
-    return {
-      name: bucket.Name.replace('-content', ''),
-      created: bucket.CreationDate
-    };
-  })
+async function formatBuckets(env, daCtx, buckets) {
+  const authedBuckets = [];
+  for (const bucket of buckets) {
+    const name = bucket.Name.replace('-content', '');
+    const auth = await isAuthorized(env, name, daCtx.user);
+    if (auth) {
+      authedBuckets.push({
+        name,
+        created: bucket.CreationDate
+      });
+    }
+  }
+  return authedBuckets;
 }
 
 export default async function listBuckets(env, daCtx) {
@@ -23,7 +29,7 @@ export default async function listBuckets(env, daCtx) {
   try {
     const resp = await client.send(command);
     return {
-      body: JSON.stringify(formatBuckets(resp.Buckets)),
+      body: JSON.stringify(await formatBuckets(env, daCtx, resp.Buckets)),
       status: resp.$metadata.httpStatusCode,
       contentType: resp.ContentType
     };
