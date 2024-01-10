@@ -15,7 +15,7 @@ export default {
     if (pathname === '/favicon.ico') return get404();
     if (pathname === '/robots.txt') return getRobots();
 
-    if (req.method === 'OPTIONS') return daResp({ body: '', status: 204 });
+    if (req.method === 'OPTIONS') return daResp({ status: 204 });
 
     const daCtx = await getDaCtx(pathname, req, env);
     const authed = await isAuthorized(env, daCtx.org, daCtx.user);
