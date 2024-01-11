@@ -20,7 +20,7 @@ export default {
     const daCtx = await getDaCtx(pathname, req, env);
     const authed = await isAuthorized(env, daCtx.org, daCtx.user);
     if (!authed) {
-      return get404();
+      return daResp({ body: '', status: 401 });
     }
 
     if (pathname.startsWith('/source')) {
