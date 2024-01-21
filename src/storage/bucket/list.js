@@ -10,7 +10,14 @@ async function formatBuckets(env, daCtx, buckets) {
   const authedBuckets = [];
   for (const bucket of buckets) {
     const name = bucket.Name.replace('-content', '');
-    const auth = await isAuthorized(env, name, daCtx.user);
+    const auth = true;
+    // check for all users in the session if they are authorized
+    for (let user in daCtx.users) {
+      if (!await isAuthorized(env, name, user)) {
+        auth = false;
+        break;
+      }
+    }
     if (auth) {
       authedBuckets.push({
         name,
