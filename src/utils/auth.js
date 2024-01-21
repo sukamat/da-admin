@@ -2,6 +2,11 @@ import { decodeJwt } from 'jose';
 
 async function setUser(user_id, expiration, headers, env) {
   const resp = await fetch(`${env.IMS_ORIGIN}/ims/profile/v1`, { headers });
+  if (!resp.ok) {
+    // Something went wrong - either with the connection or the token isn't valid
+    // assume we are anon for now (but don't cache so we can try again next time)
+    return;
+  }
   const json = await resp.json();
 
   console.log(json);
@@ -11,31 +16,45 @@ async function setUser(user_id, expiration, headers, env) {
   return value;
 }
 
-export async function getUser(req, env) {
+export async function getUsers(req, env) {
   const authHeader = req.headers.get('authorization');
+  const users = [];
   if (authHeader) {
-    const token = req.headers.get('authorization').split(' ').pop();
-    if (!token) return;
+    // We accept mutliple tokens as this might be a collab session
+    for (let auth of authHeader.split(',')) {
+      const token = auth.split(' ').pop();
+      // If we have an empty token there was an anon user in the session
+      if (!token || token.trim().length === 0) {
+        users.push({ email: 'anonymous' });
+        continue;
+      }
+      console.log(decodeJwt(token));
+      const { user_id, created_at, expires_in } = decodeJwt(token);
+      console.log(user_id, created_at, expires_in);
 
-    console.log(decodeJwt(token));
+      const expires = Number(created_at) + Number(expires_in);
+      const now = Math.floor(new Date().getTime() / 1000);
 
-    const { user_id, created_at, expires_in } = decodeJwt(token);
-    console.log(user_id, created_at, expires_in);
-
-    const expires = Number(created_at) + Number(expires_in);
-    const now = Math.floor(new Date().getTime() / 1000);
-
-    if (expires >= now) {
-      // Find the user
-      let user = await env.DA_AUTH.get(user_id);
-      // If not found, create them
-      if (!user) user = await setUser(user_id, Math.floor(expires / 1000), req.headers, env);
-      // If something went wrong, die.
-      if (!user) return;
-      return JSON.parse(user);
+      if (expires >= now) {
+        // Find the user
+        let user = await env.DA_AUTH.get(user_id);
+        let headers = new Headers(req.headers);
+        headers.delete('authorization');
+        headers.set('authorization', `Bearer ${token}`);
+        // If not found, create them
+        if (!user) user = await setUser(user_id, Math.floor(expires / 1000), {'authorization': `Bearer ${token}`}, env);
+        // If something went wrong, be anon.
+        if (!user) {
+          users.push({ email: 'anonymous' });
+        } else {
+          users.push(JSON.parse(user));
+        }
+      }
     }
+  } else {
+    users.push({ email: 'anonymous' });
   }
-  return { email: 'anonymous' };
+  return users;
 }
 
 export async function isAuthorized(env, org, user) {
