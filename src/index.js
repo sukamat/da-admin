@@ -18,8 +18,8 @@ export default {
     if (req.method === 'OPTIONS') return daResp({ status: 204 });
 
     const daCtx = await getDaCtx(pathname, req, env);
-    const authed = await isAuthorized(env, daCtx.org, daCtx.user);
-    if (!authed) {
+
+    if (!daCtx.authorized) {
       return daResp({ body: '', status: 401 });
     }
 

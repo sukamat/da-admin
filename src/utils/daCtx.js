@@ -9,7 +9,7 @@
  */
 
 import getObject from '../storage/object/get';
-import { getUser, isAuthorized } from './auth';
+import { getUsers, isAuthorized } from './auth';
 
 /**
  * Gets Dark Alley Context
@@ -17,9 +17,9 @@ import { getUser, isAuthorized } from './auth';
  * @returns {DaCtx} The Dark Alley Context.
  */
 export async function getDaCtx(pathname, req, env) {
-  const user = await getUser(req, env);
+  const users = await getUsers(req, env);
 
-  console.log(user);
+  console.log(users);
 
   // Santitize the string
   const lower = pathname.slice(1).toLowerCase();
@@ -29,11 +29,16 @@ export async function getDaCtx(pathname, req, env) {
   const [api, org, ...parts] = sanitized.split('/');
 
   // Set base details
-  const daCtx = { api, org, user };
+  const daCtx = { api, org, users };
 
   // Get org properties
-  if (org) {
-    daCtx.authorized = await isAuthorized(env, org, user);
+  daCtx.authorized = true;
+  // check for all users in the session if they are authorized
+  for (let user in users) {
+    if (!await isAuthorized(env, org, user)) {
+      daCtx.authorized = false;
+      break;
+    }
   }
 
   // Sanitize the remaining path parts
