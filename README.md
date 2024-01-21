@@ -9,3 +9,4 @@
 ### Additional details
 
 1. You can make your own buckets tied to your own Cloudflare account or you can request a `.dev.vars` file.
+2. Cloudflare KV, which is used for org properties and session login info is locally stored when developing locally. You will need to make your own local KVs to test against.
