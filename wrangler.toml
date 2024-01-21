@@ -5,3 +5,16 @@ compatibility_date = "2023-10-30"
 kv_namespaces = [
   { binding = "DA_AUTH", id = "d6217b7c63ef40889583ba5c080c3908" }
 ]
+
+[env.dev]
+vars = { ENVIRONMENT = "dev" }
+kv_namespaces = [
+  { binding = "DA_AUTH", id = "21693f3b20f54fcbb850ddc8947335ba" }
+]
+
+[env.stage]
+vars = { ENVIRONMENT = "stage" }
+kv_namespaces = [
+  { binding = "DA_AUTH", id = "21693f3b20f54fcbb850ddc8947335ba" }
+]
+

@@ -9,8 +9,6 @@ async function setUser(user_id, expiration, headers, env) {
   }
   const json = await resp.json();
 
-  console.log(json);
-
   const value = JSON.stringify({ email: json.email });
   await env.DA_AUTH.put(user_id, value, { expiration });
   return value;
@@ -28,9 +26,7 @@ export async function getUsers(req, env) {
         users.push({ email: 'anonymous' });
         continue;
       }
-      console.log(decodeJwt(token));
       const { user_id, created_at, expires_in } = decodeJwt(token);
-      console.log(user_id, created_at, expires_in);
 
       const expires = Number(created_at) + Number(expires_in);
       const now = Math.floor(new Date().getTime() / 1000);
@@ -65,6 +61,5 @@ export async function isAuthorized(env, org, user) {
 
   const admins = props['admin.role.all'];
   if (!admins) return true;
-
   return admins.some((orgUser) => orgUser === user.email);
 }

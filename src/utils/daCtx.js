@@ -19,8 +19,6 @@ import { getUsers, isAuthorized } from './auth';
 export async function getDaCtx(pathname, req, env) {
   const users = await getUsers(req, env);
 
-  console.log(users);
-
   // Santitize the string
   const lower = pathname.slice(1).toLowerCase();
   const sanitized = lower.endsWith('/') ? lower.slice(0, -1) : lower;
@@ -34,7 +32,7 @@ export async function getDaCtx(pathname, req, env) {
   // Get org properties
   daCtx.authorized = true;
   // check for all users in the session if they are authorized
-  for (let user in users) {
+  for (const user of users) {
     if (!await isAuthorized(env, org, user)) {
       daCtx.authorized = false;
       break;

@@ -11,7 +11,6 @@ function buildInput({ org, key }) {
 }
 
 export default async function getObject(env, { org, key }) {
-  console.log(org, key);
   const config = getS3Config(env);
   const client = new S3Client(config);
 

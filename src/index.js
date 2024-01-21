@@ -43,6 +43,12 @@ export default {
       return daResp(respProps);
     }
 
+    if (pathname.startsWith('/props')) {
+      // const value = JSON.stringify({"admin.role.all":["chris@millr.org"]});
+      // const res = await env.DA_AUTH.put(`${daCtx.org}-da-props`, value);
+      return daResp({ body: value, status: 201 });
+    }
+
     return daResp({ body: '', status: 404 });
   },
 };
