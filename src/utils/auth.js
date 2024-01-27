@@ -15,7 +15,7 @@ async function setUser(user_id, expiration, headers, env) {
 }
 
 export async function getUsers(req, env) {
-  const authHeader = req.headers.get('authorization');
+  const authHeader = req.headers?.get('authorization');
   const users = [];
   if (authHeader) {
     // We accept mutliple tokens as this might be a collab session
