@@ -1,54 +1,36 @@
 import { getDaCtx } from './utils/daCtx';
-import { isAuthorized } from './utils/auth';
+import daResp from './utils/daResp';
 
-import sourceHandler from './source/handler';
-import listHandler from './list/handler';
-import authHandler from './auth/handler';
-
-import { get404, daResp, getRobots } from './responses';
-import copyHandler from './copy/handler';
+import getHandler from './handlers/get';
+import postHandler from './handlers/post';
+import deleteHandler from './handlers/delete';
+import unkownHandler from './handlers/unkown';
 
 export default {
   async fetch(req, env) {
-    const pathname = new URL(req.url).pathname;
+    const daCtx = await getDaCtx(req, env);
+    if (!daCtx.authorized) return daResp({ status: 401 });
 
-    if (pathname === '/favicon.ico') return get404();
-    if (pathname === '/robots.txt') return getRobots();
-
-    if (req.method === 'OPTIONS') return daResp({ status: 204 });
-
-    const daCtx = await getDaCtx(pathname, req, env);
-
-    if (!daCtx.authorized) {
-      return daResp({ body: '', status: 401 });
+    let respObj;
+    switch (req.method) {
+      case 'GET':
+        respObj = await getHandler({ env, daCtx });
+        break;
+      case 'PUT':
+        respObj = await postHandler({ req, env, daCtx });
+        break;
+      case 'POST':
+        respObj = await postHandler({ req, env, daCtx });
+        break;
+      case 'DELETE':
+        respObj = await deleteHandler({ env, daCtx });
+        break;
+      case 'OPTIONS':
+        respObj = { status: 204 };
+      default:
+        respObj = unkownHandler();
     }
 
-    if (pathname.startsWith('/source')) {
-      const respProps = await sourceHandler(req, env, daCtx);
-      return daResp(respProps);
-    }
-
-    if (pathname.startsWith('/list')) {
-      const respProps = await listHandler(req, env, daCtx);
-      return daResp(respProps);
-    }
-
-    if (pathname.startsWith('/copy')) {
-      const respProps = await copyHandler(req, env, daCtx);
-      return daResp(respProps);
-    }
-
-    if (pathname.startsWith('/auth')) {
-      const respProps = await authHandler(req, env, daCtx);
-      return daResp(respProps);
-    }
-
-    if (pathname.startsWith('/props')) {
-      // const value = JSON.stringify({"admin.role.all":["chris@millr.org"]});
-      // const res = await env.DA_AUTH.put(`${daCtx.org}-da-props`, value);
-      return daResp({ body: value, status: 201 });
-    }
-
-    return daResp({ body: '', status: 404 });
+    return daResp(respObj);
   },
 };

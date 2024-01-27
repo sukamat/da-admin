@@ -8,15 +8,16 @@
  * @property {String} ext - The name of the extension.
  */
 
-import getObject from '../storage/object/get';
-import { getUsers, isAuthorized } from './auth';
+import { getUsers, isAuthorized } from './auth.js';
 
 /**
  * Gets Dark Alley Context
  * @param {pathname} pathname
  * @returns {DaCtx} The Dark Alley Context.
  */
-export async function getDaCtx(pathname, req, env) {
+export async function getDaCtx(req, env) {
+  const { pathname } = new URL(req.url);
+
   const users = await getUsers(req, env);
 
   // Santitize the string
@@ -27,7 +28,7 @@ export async function getDaCtx(pathname, req, env) {
   const [api, org, ...parts] = sanitized.split('/');
 
   // Set base details
-  const daCtx = { api, org, users };
+  const daCtx = { path: pathname, api, org, users };
 
   // Get org properties
   daCtx.authorized = true;
