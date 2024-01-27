@@ -4,7 +4,7 @@ import {
 } from '@aws-sdk/client-s3';
 
 import getS3Config from '../utils/config';
-import { sourceRespObject } from '../../source/helpers';
+import { sourceRespObject } from '../../helpers/source';
 
 async function getFileBody(data) {
   await data.text();
