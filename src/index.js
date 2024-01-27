@@ -27,6 +27,7 @@ export default {
         break;
       case 'OPTIONS':
         respObj = { status: 204 };
+        break;
       default:
         respObj = unkownHandler();
     }
