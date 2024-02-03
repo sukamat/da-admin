@@ -1,14 +1,23 @@
 /* eslint-env mocha */
 import assert from 'assert';
-import { getDaCtx } from '../../src/utils/daCtx.js';
+import { strict as esmock } from 'esmock';
 
 // Mocks
 import reqs from './mocks/req.js';
 import env from './mocks/env.js';
+import auth from './mocks/auth.js';
 
-describe('Dark Alley Context', () => {
+const { getDaCtx } = await esmock(
+  '../../src/utils/daCtx.js', { '../../src/utils/auth.js': auth },
+);
+
+describe('Dark Alley context', () => {
   describe('Org context', async () => {
-    const daCtx = await getDaCtx(reqs.org, env);
+    let daCtx;
+
+    before(async () => {
+      daCtx = await getDaCtx(reqs.org, env);
+    });
 
     it('should return an undefined site', () => {
       assert.strictEqual(daCtx.site, undefined);
@@ -19,8 +28,12 @@ describe('Dark Alley Context', () => {
     });
   });
 
-  describe('Site context', async () => {
-    const daCtx = await getDaCtx(reqs.site, env);
+  describe('Site context', () => {
+    let daCtx;
+
+    before(async () => {
+      daCtx = await getDaCtx(reqs.site, env);
+    });
 
     it('should return a props key', () => {
       assert.strictEqual(daCtx.propsKey, 'geometrixx.props');
@@ -28,14 +41,23 @@ describe('Dark Alley Context', () => {
   });
 
   describe('Sanitize string', async () => {
-    const daCtx = await getDaCtx(reqs.file, env);
+    let daCtx;
+
+    before(async () => {
+      daCtx = await getDaCtx(reqs.file, env);
+    });
+
     it('should return a lowercase key', () => {
       assert.strictEqual(daCtx.site, 'geometrixx');
     });
   });
 
   describe('Folder context', async () => {
-    const daCtx = await getDaCtx(reqs.folder, env);
+    let daCtx;
+
+    before(async () => {
+      daCtx = await getDaCtx(reqs.folder, env);
+    });
 
     it('should return an api', () => {
       assert.strictEqual(daCtx.api, 'source');
@@ -59,7 +81,11 @@ describe('Dark Alley Context', () => {
   });
 
   describe('File context', async () => {
-    const daCtx = await getDaCtx(reqs.file, env);
+    let daCtx;
+
+    before(async () => {
+      daCtx = await getDaCtx(reqs.file, env);
+    });
 
     it('should return a name', () => {
       assert.strictEqual(daCtx.name, 'outreach');
@@ -72,12 +98,22 @@ describe('Dark Alley Context', () => {
     it('should return a props key', () => {
       assert.strictEqual(daCtx.propsKey, 'geometrixx/nft/outreach.html.props');
     });
+
+    it('should not return an extension in path', () => {
+      assert.strictEqual(daCtx.pathname, '/geometrixx/nft/outreach');
+      assert.strictEqual(daCtx.aemPathname, '/nft/outreach');
+    });
   });
 
   describe('Media context', async () => {
-    const daCtx = await getDaCtx(reqs.media, env);
+    let daCtx;
+
+    before(async () => {
+      daCtx = await getDaCtx(reqs.media, env);
+    });
 
     it('should return a props key', () => {
+      assert.strictEqual(daCtx.pathname, '/geometrixx/nft/blockchain.png');
       assert.strictEqual(daCtx.aemPathname, '/nft/blockchain.png');
     });
   });
