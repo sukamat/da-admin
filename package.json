@@ -21,6 +21,7 @@
   "devDependencies": {
     "@redocly/cli": "^1.4.1",
     "c8": "^8.0.1",
+    "esmock": "^2.6.3",
     "mocha": "^10.2.0",
     "wrangler": "^3.17.1"
   },

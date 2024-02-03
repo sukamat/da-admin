@@ -1,6 +1,6 @@
 import { decodeJwt } from 'jose';
 
-async function setUser(user_id, expiration, headers, env) {
+export async function setUser(user_id, expiration, headers, env) {
   const resp = await fetch(`${env.IMS_ORIGIN}/ims/profile/v1`, { headers });
   if (!resp.ok) {
     // Something went wrong - either with the connection or the token isn't valid
@@ -24,10 +24,8 @@ export async function getUsers(req, env) {
       // If we have an empty token there was an anon user in the session
       if (!token || token.trim().length === 0) {
         users.push({ email: 'anonymous' });
-        continue;
       }
       const { user_id, created_at, expires_in } = decodeJwt(token);
-
       const expires = Number(created_at) + Number(expires_in);
       const now = Math.floor(new Date().getTime() / 1000);
 
@@ -38,13 +36,15 @@ export async function getUsers(req, env) {
         headers.delete('authorization');
         headers.set('authorization', `Bearer ${token}`);
         // If not found, create them
-        if (!user) user = await setUser(user_id, Math.floor(expires / 1000), {'authorization': `Bearer ${token}`}, env);
+        if (!user) user = await setUser(user_id, Math.floor(expires / 1000), headers, env);
         // If something went wrong, be anon.
         if (!user) {
           users.push({ email: 'anonymous' });
         } else {
           users.push(JSON.parse(user));
         }
+      } else {
+        users.push({ email: 'anonymous' });
       }
     }
   } else {

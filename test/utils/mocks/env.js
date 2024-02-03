@@ -1,8 +1,14 @@
+const NAMESPACES = {
+  'geometrixx-da-props': { "admin.role.all":["aparker@geometrixx.info"] },
+  'beagle-da-props': { },
+}
+
 const env = {
   DA_AUTH: {
-    get: () => {
-      return { "admin.role.all":["aparker@geometrixx.info"] };
-    }
+    get: (kvNamespace) => {
+      return NAMESPACES[kvNamespace];
+    },
+    put: (kvNamespace, value, expObj) => {},
   }
 };
 

@@ -1,3 +1,8 @@
+# Dark Alley Admin
+
+## Info
+[![codecov](https://codecov.io/github/adobe/da-admin/graph/badge.svg?token=RP74sW9MlC)](https://codecov.io/github/adobe/da-admin)
+
 ## Getting started
 
 ### TL;DR

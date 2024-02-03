@@ -36,7 +36,6 @@ export async function getDaCtx(req, env) {
   for (const user of users) {
     if (!await isAuthorized(env, org, user)) {
       daCtx.authorized = false;
-      break;
     }
   }
 
