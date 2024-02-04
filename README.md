@@ -2,6 +2,8 @@
 ## Introduction
 Dark Alley Admin is the API used to store and retrieve files and details from the Dark Alley content repository.
 
+You can read the official API docs here: https://docs.da.live
+
 ## Info
 [![codecov](https://codecov.io/github/adobe/da-admin/graph/badge.svg?token=RP74sW9MlC)](https://codecov.io/github/adobe/da-admin)
 
