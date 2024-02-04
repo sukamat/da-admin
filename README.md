@@ -5,6 +5,9 @@
 
 ## Getting started
 
+### Requirements
+1. Node 20+
+
 ### TL;DR
 1. Clone this repo to your computer.
 1. In a terminal, run `npm install` this repo's folder.
