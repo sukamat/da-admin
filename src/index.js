@@ -8,6 +8,8 @@ import unkownHandler from './handlers/unkown';
 
 export default {
   async fetch(req, env) {
+    if (req.method === 'OPTIONS') return daResp({ status: 204 });
+
     const daCtx = await getDaCtx(req, env);
     if (!daCtx.authorized) return daResp({ status: 401 });
 
@@ -24,9 +26,6 @@ export default {
         break;
       case 'DELETE':
         respObj = await deleteHandler({ env, daCtx });
-        break;
-      case 'OPTIONS':
-        respObj = { status: 204 };
         break;
       default:
         respObj = unkownHandler();
