@@ -64,6 +64,12 @@ describe('Dark Alley auth', () => {
       assert.strictEqual(users[0].email, 'aparker@geometrixx.info');
     });
 
+    it('authorized with user if email matches and anonymous if present', async () => {
+      const users = await getUsers(reqs.siteMulti, env);
+      assert.strictEqual(users[0].email, 'anonymous')
+      assert.strictEqual(users[1].email, 'aparker@geometrixx.info');
+    });
+
     it('anonymous if ims fails', async () => {
       const users = await getUsers(reqs.media, env);
       assert.strictEqual(users[0].email, 'anonymous');

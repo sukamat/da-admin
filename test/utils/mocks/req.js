@@ -20,6 +20,12 @@ const optsWithExpAuth = {
   }),
 };
 
+const optsWithMultiAuthAnon = {
+  headers: new Headers({
+    'Authorization': `,Bearer aparker@geometrixx.info`
+  }),
+};
+
 const optsWithForceFail = {
   headers: new Headers({
     'x-mock-fail': true,
@@ -33,6 +39,7 @@ const reqs = {
   folder: new Request('https://da.live/source/cq/Geometrixx/NFT/', optsWithExpAuth),
   file: new Request('https://da.live/source/cq/Geometrixx/NFT/Outreach.html', optsWithEmptyBearer),
   media: new Request('https://da.live/source/cq/Geometrixx/NFT/blockchain.png', optsWithForceFail),
+  siteMulti: new Request('https://da.live/source/cq/Geometrixx', optsWithMultiAuthAnon),
 };
 
 export default reqs;
