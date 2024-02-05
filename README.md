@@ -1,11 +1,18 @@
 # Dark Alley Admin
+## Introduction
+Dark Alley Admin is the API used to store and retrieve files and details from the Dark Alley content repository.
+
+You can read the official API docs here: https://docs.da.live
 
 ## Info
 [![codecov](https://codecov.io/github/adobe/da-admin/graph/badge.svg?token=RP74sW9MlC)](https://codecov.io/github/adobe/da-admin)
 
 ## Getting started
 
-### TL;DR
+### Requirements
+1. Node 20+
+
+### Local development
 1. Clone this repo to your computer.
 1. In a terminal, run `npm install` this repo's folder.
 1. Run `npm run dev` to start a local server. You may be asked to login to Cloudflare.
