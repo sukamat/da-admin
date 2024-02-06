@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import { decodeJwt } from 'jose';
 
 export async function setUser(user_id, expiration, headers, env) {
@@ -5,7 +6,7 @@ export async function setUser(user_id, expiration, headers, env) {
   if (!resp.ok) {
     // Something went wrong - either with the connection or the token isn't valid
     // assume we are anon for now (but don't cache so we can try again next time)
-    return;
+    return undefined;
   }
   const json = await resp.json();
 
@@ -19,11 +20,12 @@ export async function getUsers(req, env) {
   const users = [];
   if (authHeader) {
     // We accept mutliple tokens as this might be a collab session
-    for (let auth of authHeader.split(',')) {
+    for (const auth of authHeader.split(',')) {
       const token = auth.split(' ').pop();
       // If we have an empty token there was an anon user in the session
       if (!token || token.trim().length === 0) {
         users.push({ email: 'anonymous' });
+        // eslint-disable-next-line no-continue
         continue;
       }
       const { user_id, created_at, expires_in } = decodeJwt(token);
@@ -33,7 +35,7 @@ export async function getUsers(req, env) {
       if (expires >= now) {
         // Find the user
         let user = await env.DA_AUTH.get(user_id);
-        let headers = new Headers(req.headers);
+        const headers = new Headers(req.headers);
         headers.delete('authorization');
         headers.set('authorization', `Bearer ${token}`);
         // If not found, create them

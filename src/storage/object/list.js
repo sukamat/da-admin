@@ -3,8 +3,8 @@ import {
   ListObjectsV2Command,
 } from '@aws-sdk/client-s3';
 
-import getS3Config from '../utils/config';
-import formatList from '../utils/list';
+import getS3Config from '../utils/config.js';
+import formatList from '../utils/list.js';
 
 function buildInput({ org, key }) {
   return {
@@ -27,7 +27,7 @@ export default async function listObjects(env, daCtx) {
     return {
       body: JSON.stringify(body),
       status: resp.$metadata.httpStatusCode,
-      contentType: resp.ContentType
+      contentType: resp.ContentType,
     };
   } catch (e) {
     return { body: '', status: 404 };

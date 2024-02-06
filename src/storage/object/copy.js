@@ -2,11 +2,9 @@ import {
   S3Client,
   ListObjectsV2Command,
   CopyObjectCommand,
-  DeleteObjectCommand,
 } from '@aws-sdk/client-s3';
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
 
-import getS3Config from '../utils/config';
+import getS3Config from '../utils/config.js';
 
 function buildInput(org, key) {
   return {
@@ -19,7 +17,7 @@ const copyFile = async (client, org, sourceKey, details) => {
   const Key = `${sourceKey.replace(details.source, details.destination)}`;
 
   try {
-    const resp = await client.send(
+    await client.send(
       new CopyObjectCommand({
         Bucket: `${org}-content`,
         Key,
@@ -27,6 +25,7 @@ const copyFile = async (client, org, sourceKey, details) => {
       }),
     );
   } catch (e) {
+    // eslint-disable-next-line no-console
     console.log(e.$metadata);
   }
 

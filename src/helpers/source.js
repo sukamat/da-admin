@@ -1,18 +1,18 @@
-import { FORM_TYPES } from '../utils/constants';
+import { FORM_TYPES } from '../utils/constants.js';
 
 /**
  * Builds a source response
- * @param {*} key 
+ * @param {*} key
  */
 export function sourceRespObject(daCtx, props) {
   const { org, site, isFile, pathname, aemPathname } = daCtx;
 
   const obj = {
-      source: {
-        editUrl: `https://da.live/${isFile ? 'edit#/' : ''}${org}${pathname}`,
-        contentUrl: `https://content.da.live/${org}${pathname}`,
-      }
-  }
+    source: {
+      editUrl: `https://da.live/${isFile ? 'edit#/' : ''}${org}${pathname}`,
+      contentUrl: `https://content.da.live/${org}${pathname}`,
+    },
+  };
 
   if (props) obj.source.props = props;
 
@@ -20,7 +20,7 @@ export function sourceRespObject(daCtx, props) {
     obj.aem = {
       previewUrl: `https://main--${site}--${org}.hlx.page${aemPathname}`,
       liveUrl: `https://main--${site}--${org}.hlx.live${aemPathname}`,
-    }
+    };
   }
 
   return obj;
@@ -37,7 +37,7 @@ function getFormEntries(formData) {
     entries.props = JSON.parse(formData.get('props'));
   }
 
-  return entries
+  return entries;
 }
 
 async function formPutHandler(req) {
@@ -45,6 +45,7 @@ async function formPutHandler(req) {
   try {
     formData = await req.formData();
   } catch (e) {
+    // eslint-disable-next-line no-console
     console.log('No form data', e);
   }
   return formData ? getFormEntries(formData) : null;
@@ -53,8 +54,9 @@ async function formPutHandler(req) {
 export default async function putHelper(req, env, daCtx) {
   const contentType = req.headers.get('content-type')?.split(';')[0];
 
-  if (FORM_TYPES.some((type) => type = contentType ))
-    return formPutHandler(req, env, daCtx);
+  if (FORM_TYPES.some((type) => type === contentType)) return formPutHandler(req, env, daCtx);
 
   if (!contentType) return null;
+
+  return undefined;
 }

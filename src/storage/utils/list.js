@@ -2,6 +2,7 @@ export default function formatList(resp, daCtx) {
   function compare(a, b) {
     if (a.name < b.name) return -1;
     if (a.name > b.name) return 1;
+    return undefined;
   }
 
   const { CommonPrefixes, Contents } = resp;
@@ -18,7 +19,6 @@ export default function formatList(resp, daCtx) {
 
       const path = `/${daCtx.org}/${prefix.Prefix.slice(0, -1)}`;
       combined.push({ path, name });
-
     });
   }
 
@@ -37,10 +37,10 @@ export default function formatList(resp, daCtx) {
 
       // See if the folder is already in the list
       if (ext === 'props') {
-       if (combined.some((item) => item.name === name )) return;
+        if (combined.some((item) => item.name === name)) return;
 
-       // Remove props from the key so it can look like a folder
-       content.Key = content.Key.replace('.props', '');
+        // Remove props from the key so it can look like a folder
+        content.Key = content.Key.replace('.props', '');
       }
 
       // Do not show any hidden files.

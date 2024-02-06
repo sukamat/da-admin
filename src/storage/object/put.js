@@ -3,8 +3,8 @@ import {
   PutObjectCommand,
 } from '@aws-sdk/client-s3';
 
-import getS3Config from '../utils/config';
-import { sourceRespObject } from '../../helpers/source';
+import getS3Config from '../utils/config.js';
+import { sourceRespObject } from '../../helpers/source.js';
 
 async function getFileBody(data) {
   await data.text();
@@ -22,15 +22,17 @@ function buildInput({ org, key, body, type }) {
 }
 
 function createBucketIfMissing(client) {
-  client.middlewareStack.add((next) => async (args) => {
-    args.request.headers['cf-create-bucket-if-missing'] = 'true';
-    return next(args);
-  },
-  {
-    step: 'build',
-    name: 'createIfMissingMiddleware',
-    tags: ['METADATA', 'CREATE-BUCKET-IF-MISSING'],
-  });
+  client.middlewareStack.add(
+    (next) => async (args) => {
+      args.request.headers['cf-create-bucket-if-missing'] = 'true';
+      return next(args);
+    },
+    {
+      step: 'build',
+      name: 'createIfMissingMiddleware',
+      tags: ['METADATA', 'CREATE-BUCKET-IF-MISSING'],
+    },
+  );
 }
 
 export default async function putObject(env, daCtx, obj) {

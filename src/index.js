@@ -1,10 +1,10 @@
-import { getDaCtx } from './utils/daCtx';
-import daResp from './utils/daResp';
+import getDaCtx from './utils/daCtx.js';
+import daResp from './utils/daResp.js';
 
-import getHandler from './handlers/get';
-import postHandler from './handlers/post';
-import deleteHandler from './handlers/delete';
-import unkownHandler from './handlers/unkown';
+import getHandler from './handlers/get.js';
+import postHandler from './handlers/post.js';
+import deleteHandler from './handlers/delete.js';
+import unkownHandler from './handlers/unkown.js';
 
 export default {
   async fetch(req, env) {

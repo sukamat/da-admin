@@ -3,7 +3,7 @@ import {
   GetObjectCommand,
 } from '@aws-sdk/client-s3';
 
-import getS3Config from '../utils/config';
+import getS3Config from '../utils/config.js';
 
 function buildInput({ org, key }) {
   const Bucket = `${org}-content`;
@@ -22,7 +22,7 @@ export default async function getObject(env, { org, key }) {
     return {
       body: resp.Body,
       status: resp.$metadata.httpStatusCode,
-      contentType: resp.ContentType
+      contentType: resp.ContentType,
     };
   } catch (e) {
     return { body: '', status: 404 };

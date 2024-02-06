@@ -15,7 +15,7 @@ import { getUsers, isAuthorized } from './auth.js';
  * @param {pathname} pathname
  * @returns {DaCtx} The Dark Alley Context.
  */
-export async function getDaCtx(req, env) {
+export default async function getDaCtx(req, env) {
   const { pathname } = new URL(req.url);
 
   const users = await getUsers(req, env);
@@ -46,6 +46,7 @@ export async function getDaCtx(req, env) {
   // Get the final source name
   daCtx.filename = path.pop() || '';
 
+  // eslint-disable-next-line prefer-destructuring
   daCtx.site = path[0];
 
   // Handle folders and files under a site

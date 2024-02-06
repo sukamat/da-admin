@@ -1,8 +1,8 @@
-import getObject from '../storage/object/get';
-import putObject from '../storage/object/put';
-import deleteObject from '../storage/object/delete';
+import getObject from '../storage/object/get.js';
+import putObject from '../storage/object/put.js';
+import deleteObject from '../storage/object/delete.js';
 
-import putHelper from '../helpers/source';
+import putHelper from '../helpers/source.js';
 
 export async function deleteSource({ env, daCtx }) {
   return deleteObject(env, daCtx);

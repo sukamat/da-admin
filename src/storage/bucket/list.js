@@ -3,8 +3,8 @@ import {
   ListBucketsCommand,
 } from '@aws-sdk/client-s3';
 
-import getS3Config from '../utils/config';
-import { isAuthorized } from '../../utils/auth';
+import getS3Config from '../utils/config.js';
+import { isAuthorized } from '../../utils/auth.js';
 
 async function formatBuckets(env, daCtx, buckets) {
   const authedBuckets = [];
@@ -12,7 +12,7 @@ async function formatBuckets(env, daCtx, buckets) {
     const name = bucket.Name.replace('-content', '');
     let auth = true;
     // check for all users in the session if they are authorized
-    for (let user of daCtx.users) {
+    for (const user of daCtx.users) {
       if (!await isAuthorized(env, name, user)) {
         auth = false;
         break;
@@ -21,7 +21,7 @@ async function formatBuckets(env, daCtx, buckets) {
     if (auth) {
       authedBuckets.push({
         name,
-        created: bucket.CreationDate
+        created: bucket.CreationDate,
       });
     }
   }
@@ -38,7 +38,7 @@ export default async function listBuckets(env, daCtx) {
     return {
       body: JSON.stringify(await formatBuckets(env, daCtx, resp.Buckets)),
       status: resp.$metadata.httpStatusCode,
-      contentType: resp.ContentType
+      contentType: resp.ContentType,
     };
   } catch (e) {
     return { body: '', status: 404 };

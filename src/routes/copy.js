@@ -1,5 +1,5 @@
-import copyObject from '../storage/object/copy';
-import copyHelper from '../helpers/copy';
+import copyObject from '../storage/object/copy.js';
+import copyHelper from '../helpers/copy.js';
 
 export default async function copyHandler(req, env, daCtx) {
   if (req.method === 'POST') {

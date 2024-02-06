@@ -3,9 +3,9 @@ import {
   DeleteObjectCommand,
   ListObjectsV2Command,
 } from '@aws-sdk/client-s3';
-import { getSignedUrl } from "@aws-sdk/s3-request-presigner";
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
-import getS3Config from '../utils/config';
+import getS3Config from '../utils/config.js';
 
 function buildInput(org, key) {
   return {
@@ -20,6 +20,7 @@ async function deleteObject(client, org, Key) {
     const url = await getSignedUrl(client, delCommand, { expiresIn: 3600 });
     await fetch(url, { method: 'DELETE' });
   } catch (e) {
+    // eslint-disable-next-line no-console
     console.log(e);
   }
 }
@@ -53,12 +54,11 @@ export default async function deleteObjects(env, daCtx) {
 
       ContinuationToken = NextContinuationToken;
     } catch (e) {
+      // eslint-disable-next-line no-console
       console.log(e);
       return { body: '', status: 404 };
     }
   } while (ContinuationToken);
-
-
 
   return { body: '', status: 204 };
 }
