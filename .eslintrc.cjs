@@ -1,5 +1,5 @@
 /*
- * Copyright 2024 Adobe. All rights reserved.
+ * Copyright 2019 Adobe. All rights reserved.
  * This file is licensed to you under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License. You may obtain a copy
  * of the License at http://www.apache.org/licenses/LICENSE-2.0
@@ -9,12 +9,11 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-export default function daResp({ status, body = '', contentType = 'application/json' }) {
-  const headers = new Headers();
-  headers.append('Access-Control-Allow-Origin', '*');
-  headers.append('Access-Control-Allow-Methods', 'GET, PUT, POST, DELETE');
-  headers.append('Access-Control-Allow-Headers', '*');
-  headers.append('Content-Type', contentType);
 
-  return new Response(body, { status, headers });
-}
+module.exports = {
+  root: true,
+  extends: '@adobe/helix',
+  rules: {
+    'no-await-in-loop': 0,
+  },
+};
