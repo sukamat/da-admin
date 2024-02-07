@@ -35,6 +35,8 @@ export async function getUsers(req, env) {
     // If we have an empty token there was an anon user in the session
     if (!token || token.trim().length === 0) {
       users.push({ email: 'anonymous' });
+      // eslint-disable-next-line no-continue
+      continue;
     }
     const { user_id: userId, created_at: createdAt, expires_in: expiresIn } = decodeJwt(token);
     const expires = Number(createdAt) + Number(expiresIn);
