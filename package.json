@@ -14,26 +14,22 @@
     "dev": "wrangler dev",
     "deploy:prod": "wrangler deploy",
     "deploy:stage": "wrangler deploy --env stage",
-    "start": "wrangler dev",
-    "lint:js": "eslint src",
-    "lint": "npm run lint:js"
+    "start": "wrangler dev"
   },
   "author": "",
   "license": "Apache-2.0",
   "devDependencies": {
+    "@adobe/eslint-config-helix": "2.0.6",
     "@redocly/cli": "^1.4.1",
     "c8": "^8.0.1",
+    "eslint": "8.56.0",
     "esmock": "^2.6.3",
     "mocha": "^10.2.0",
-    "wrangler": "^3.17.1",
-    "@babel/core": "7.17.7",
-    "@babel/eslint-parser": "7.17.0",
-    "eslint": "^8.11.0",
-    "eslint-config-airbnb-base": "15.0.0",
-    "eslint-plugin-chai-friendly": "^0.7.2",
-    "eslint-plugin-compat": "^4.0.2",
-    "eslint-plugin-ecmalist": "^1.0.8",
-    "eslint-plugin-import": "2.25.4"
+    "wrangler": "^3.17.1"
+  },
+  "lint-staged": {
+    "*.js": "eslint",
+    "*.cjs": "eslint"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.456.0",
