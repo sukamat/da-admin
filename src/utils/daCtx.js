@@ -1,11 +1,13 @@
-/**
- * @typedef {Object} DaCtx
- * @property {String} api - The API being requested.
- * @property {String} org - The organization or owner of the content.
- * @property {String} site - The site context.
- * @property {String} path - The path to the resource relative to the site.
- * @property {String} name - The name of the resource being requested.
- * @property {String} ext - The name of the extension.
+/*
+ * Copyright 2024 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
  */
 
 import { getUsers, isAuthorized } from './auth.js';
@@ -15,7 +17,7 @@ import { getUsers, isAuthorized } from './auth.js';
  * @param {pathname} pathname
  * @returns {DaCtx} The Dark Alley Context.
  */
-export async function getDaCtx(req, env) {
+export default async function getDaCtx(req, env) {
   const { pathname } = new URL(req.url);
 
   const users = await getUsers(req, env);
@@ -28,7 +30,9 @@ export async function getDaCtx(req, env) {
   const [api, org, ...parts] = sanitized.split('/');
 
   // Set base details
-  const daCtx = { path: pathname, api, org, users };
+  const daCtx = {
+    path: pathname, api, org, users,
+  };
 
   // Get org properties
   daCtx.authorized = true;
@@ -46,7 +50,7 @@ export async function getDaCtx(req, env) {
   // Get the final source name
   daCtx.filename = path.pop() || '';
 
-  daCtx.site = path[0];
+  [daCtx.site] = path;
 
   // Handle folders and files under a site
   const split = daCtx.filename.split('.');
