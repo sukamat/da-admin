@@ -36,28 +36,28 @@ export async function getUsers(req, env) {
     if (!token || token.trim().length === 0) {
       users.push({ email: 'anonymous' });
     }
-    const {
-      user_id: userId,
-      created_at: createdAt,
-      expires_in: expiresIn,
-    } = decodeJwt(token);
+    const { user_id: userId, created_at: createdAt, expires_in: expiresIn } = decodeJwt(token);
     const expires = Number(createdAt) + Number(expiresIn);
     const now = Math.floor(new Date().getTime() / 1000);
 
     if (expires >= now) {
-      // Find the user
+      // Find the user in recent sessions
       let user = await env.DA_AUTH.get(userId);
-      const headers = new Headers(req.headers);
-      headers.delete('authorization');
-      headers.set('authorization', `Bearer ${token}`);
-      // If not found, create them
-      if (!user) user = await setUser(userId, Math.floor(expires / 1000), headers, env);
-      // If something went wrong, be anon.
+
+      // If not found, add them to recent sessions
       if (!user) {
-        users.push({ email: 'anonymous' });
-      } else {
-        users.push(JSON.parse(user));
+        const headers = new Headers(req.headers);
+        headers.delete('authorization');
+        headers.set('authorization', `Bearer ${token}`);
+        // If not found, create them
+        user = await setUser(userId, Math.floor(expires / 1000), headers, env);
       }
+
+      // If there's still no user, make them anon.
+      if (!user) user = JSON.stringify({ email: 'anonymous' });
+
+      // Finally, push whoever was made.
+      users.push(JSON.parse(user));
     } else {
       users.push({ email: 'anonymous' });
     }
