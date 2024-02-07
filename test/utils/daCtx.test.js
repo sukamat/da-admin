@@ -7,7 +7,7 @@ import reqs from './mocks/req.js';
 import env from './mocks/env.js';
 import auth from './mocks/auth.js';
 
-const { getDaCtx } = await esmock(
+const getDaCtx = await esmock(
   '../../src/utils/daCtx.js', { '../../src/utils/auth.js': auth },
 );
 

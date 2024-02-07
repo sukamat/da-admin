@@ -1,7 +1,19 @@
+/*
+ * Copyright 2024 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
 export default function formatList(resp, daCtx) {
   function compare(a, b) {
     if (a.name < b.name) return -1;
     if (a.name > b.name) return 1;
+    return undefined;
   }
 
   const { CommonPrefixes, Contents } = resp;
@@ -18,7 +30,6 @@ export default function formatList(resp, daCtx) {
 
       const path = `/${daCtx.org}/${prefix.Prefix.slice(0, -1)}`;
       combined.push({ path, name });
-
     });
   }
 
@@ -37,10 +48,11 @@ export default function formatList(resp, daCtx) {
 
       // See if the folder is already in the list
       if (ext === 'props') {
-       if (combined.some((item) => item.name === name )) return;
+        if (combined.some((item) => item.name === name)) return;
 
-       // Remove props from the key so it can look like a folder
-       content.Key = content.Key.replace('.props', '');
+        // Remove props from the key so it can look like a folder
+        // eslint-disable-next-line no-param-reassign
+        content.Key = content.Key.replace('.props', '');
       }
 
       // Do not show any hidden files.
