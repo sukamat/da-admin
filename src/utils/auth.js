@@ -28,15 +28,10 @@ export async function setUser(userId, expiration, headers, env) {
 export async function getUsers(req, env) {
   const authHeader = req.headers?.get('authorization');
   if (!authHeader) return [{ email: 'anonymous' }];
-  const users = [];
-  // We accept mutliple tokens as this might be a collab session
-  for (const auth of authHeader.split(',')) {
-    const token = auth.split(' ').pop();
-    // If we have an empty token there was an anon user in the session
+
+  async function parseUser(token) {
     if (!token || token.trim().length === 0) {
-      users.push({ email: 'anonymous' });
-      // eslint-disable-next-line no-continue
-      continue;
+      return { email: 'anonymous' };
     }
     const { user_id: userId, created_at: createdAt, expires_in: expiresIn } = decodeJwt(token);
     const expires = Number(createdAt) + Number(expiresIn);
@@ -56,15 +51,19 @@ export async function getUsers(req, env) {
       }
 
       // If there's still no user, make them anon.
-      if (!user) user = JSON.stringify({ email: 'anonymous' });
+      if (!user) return { email: 'anonymous' };
 
-      // Finally, push whoever was made.
-      users.push(JSON.parse(user));
+      // Finally, return whoever was made.
+      return JSON.parse(user);
     } else {
-      users.push({ email: 'anonymous' });
+      return { email: 'anonymous' };
     }
   }
-  return users;
+  return Promise.all(
+    authHeader.split(',')
+      .map((auth) => auth.split(' ').pop())
+      .map(parseUser),
+  );
 }
 
 export async function isAuthorized(env, org, user) {
