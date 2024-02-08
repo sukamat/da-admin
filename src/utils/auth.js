@@ -36,7 +36,7 @@ export async function getUsers(req, env) {
     const expires = Number(createdAt) + Number(expiresIn);
     const now = Math.floor(new Date().getTime() / 1000);
 
-    if (expires < now) return { email: 'anonymous' }; 
+    if (expires < now) return { email: 'anonymous' };
     // Find the user in recent sessions
     let user = await env.DA_AUTH.get(userId);
 
