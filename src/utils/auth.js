@@ -28,43 +28,39 @@ export async function setUser(userId, expiration, headers, env) {
 export async function getUsers(req, env) {
   const authHeader = req.headers?.get('authorization');
   if (!authHeader) return [{ email: 'anonymous' }];
-  const users = [];
-  // We accept mutliple tokens as this might be a collab session
-  for (const auth of authHeader.split(',')) {
-    const token = auth.split(' ').pop();
-    // If we have an empty token there was an anon user in the session
-    if (!token || token.trim().length === 0) {
-      users.push({ email: 'anonymous' });
-      // eslint-disable-next-line no-continue
-      continue;
-    }
+
+  async function parseUser(token) {
+    if (!token || token.trim().length === 0) return { email: 'anonymous' };
+
     const { user_id: userId, created_at: createdAt, expires_in: expiresIn } = decodeJwt(token);
     const expires = Number(createdAt) + Number(expiresIn);
     const now = Math.floor(new Date().getTime() / 1000);
 
-    if (expires >= now) {
-      // Find the user in recent sessions
-      let user = await env.DA_AUTH.get(userId);
+    if (expires < now) return { email: 'anonymous' };
+    // Find the user in recent sessions
+    let user = await env.DA_AUTH.get(userId);
 
-      // If not found, add them to recent sessions
-      if (!user) {
-        const headers = new Headers(req.headers);
-        headers.delete('authorization');
-        headers.set('authorization', `Bearer ${token}`);
-        // If not found, create them
-        user = await setUser(userId, Math.floor(expires / 1000), headers, env);
-      }
-
-      // If there's still no user, make them anon.
-      if (!user) user = JSON.stringify({ email: 'anonymous' });
-
-      // Finally, push whoever was made.
-      users.push(JSON.parse(user));
-    } else {
-      users.push({ email: 'anonymous' });
+    // If not found, add them to recent sessions
+    if (!user) {
+      const headers = new Headers(req.headers);
+      headers.delete('authorization');
+      headers.set('authorization', `Bearer ${token}`);
+      // If not found, create them
+      user = await setUser(userId, Math.floor(expires / 1000), headers, env);
     }
+
+    // If there's still no user, make them anon.
+    if (!user) return { email: 'anonymous' };
+
+    // Finally, return whoever was made.
+    return JSON.parse(user);
   }
-  return users;
+
+  return Promise.all(
+    authHeader.split(',')
+      .map((auth) => auth.split(' ').pop())
+      .map(parseUser),
+  );
 }
 
 export async function isAuthorized(env, org, user) {
