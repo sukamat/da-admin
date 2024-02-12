@@ -12,6 +12,7 @@
 import getDaCtx from './utils/daCtx.js';
 import daResp from './utils/daResp.js';
 
+import headHandler from './handlers/head.js';
 import getHandler from './handlers/get.js';
 import postHandler from './handlers/post.js';
 import deleteHandler from './handlers/delete.js';
@@ -26,6 +27,9 @@ export default {
 
     let respObj;
     switch (req.method) {
+      case 'HEAD':
+        respObj = await headHandler({ env, daCtx });
+        break;
       case 'GET':
         respObj = await getHandler({ env, daCtx });
         break;
