@@ -12,6 +12,7 @@
 import {
   S3Client,
   GetObjectCommand,
+  HeadObjectCommand,
 } from '@aws-sdk/client-s3';
 
 import getS3Config from '../utils/config.js';
@@ -21,12 +22,12 @@ function buildInput({ org, key }) {
   return { Bucket, Key: key };
 }
 
-export default async function getObject(env, { org, key }) {
+export default async function getObject(env, { org, key, head }) {
   const config = getS3Config(env);
   const client = new S3Client(config);
 
   const input = buildInput({ org, key });
-  const command = new GetObjectCommand(input);
+  const command = head ? new HeadObjectCommand(input) : new GetObjectCommand(input);
 
   try {
     const resp = await client.send(command);
@@ -34,8 +35,9 @@ export default async function getObject(env, { org, key }) {
       body: resp.Body,
       status: resp.$metadata.httpStatusCode,
       contentType: resp.ContentType,
+      contentLength: resp.ContentLength,
     };
   } catch (e) {
-    return { body: '', status: 404 };
+    return { body: '', status: 404, contentLength: 0 };
   }
 }
