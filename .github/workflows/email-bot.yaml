@@ -1,9 +1,11 @@
-name: DA Bot Release Email
+name: Dark Alley Bot Release Email
 
 on:
   pull_request_target:
     types:
+      - opened
       - closed
+      - reopened
     branches:
       - config-api
 
