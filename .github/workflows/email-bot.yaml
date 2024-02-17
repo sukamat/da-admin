@@ -1,4 +1,4 @@
-name: Dark Alley Bot Release Email
+name: Dark Alley Bot release email
 
 on:
   pull_request_target:
