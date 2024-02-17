@@ -11,12 +11,12 @@ on:
 
 jobs:
   action:
-    if: github.event.pull_request.merged == true
+    # if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
 
     steps:
       - name: Check out repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
       - name: Use email bot
         uses: adobecom/da-email-bot@main
         env:
