@@ -20,8 +20,8 @@ jobs:
       - name: Use email bot
         uses: adobecom/da-email-bot@main
         env:
-          TO_EMAIL: ${{ secrets.TO_EMAIL }}
-          FROM_EMAIL: 'release@em9437.da.live'
-          FROM_NAME: 'Dark Alley Release'
+          SG_TO_EMAIL: ${{ secrets.SG_TO_EMAIL }}
+          SG_FROM_EMAIL: ${{ secrets.SG_FROM_EMAIL }}
+          SG_FROM_NAME: ${{ secrets.SG_FROM_NAME }}
           SG_KEY: ${{ secrets.SG_KEY }}
           SG_TEMPLATE: 'd-24723d9fc5964674a61426db17553c58'
