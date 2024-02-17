@@ -1,17 +1,15 @@
-name: Dark Alley Bot release email
+name: Dark Alley Bot Release Email
 
 on:
   pull_request_target:
     types:
-      - opened
       - closed
-      - reopened
     branches:
       - config-api
 
 jobs:
   action:
-    # if: github.event.pull_request.merged == true
+    if: github.event.pull_request.merged == true
     runs-on: ubuntu-latest
 
     steps:
