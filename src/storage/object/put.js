@@ -3,6 +3,7 @@ import {
   PutObjectCommand,
 } from '@aws-sdk/client-s3';
 
+
 import getS3Config from '../utils/config';
 import { sourceRespObject } from '../../source/helpers';
 
@@ -16,9 +17,9 @@ function getObjectBody(data) {
   return { body: JSON.stringify(data), type: 'application/json' };
 }
 
-function buildInput({ org, key, body, type }) {
+function buildInput({ org, key, body, type, contentLength }) {
   const Bucket = `${org}-content`;
-  return { Bucket, Key: key, Body: body, ContentType: type };
+  return { Bucket, Key: key, Body: body, ContentType: type, ContentLength: contentLength };
 }
 
 function createBucketIfMissing(client) {
@@ -49,6 +50,17 @@ export default async function putObject(env, daCtx, obj) {
       const isFile = obj.data instanceof File;
       const { body, type } = isFile ? await getFileBody(obj.data) : getObjectBody(obj.data);
       inputs.push(buildInput({ org, key, body, type }));
+    }
+    if (obj.stream) {
+      inputs.push(
+        buildInput({ 
+          org,
+          key,
+          body: obj.stream,
+          type: obj.contentType,
+          contentLength: obj.stream.actualByteCount,
+        }),
+      );
     }
     if (obj.props) {
       const { body, type } = getObjectBody(obj.props);

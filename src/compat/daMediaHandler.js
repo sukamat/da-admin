@@ -1,9 +1,10 @@
-import crypto from 'crypto';
 import mime from 'mime';
 import { MediaHandler } from '@adobe/helix-mediahandler';
+import { getDaCtx } from '../utils/daCtx';
+import putObject from '../storage/object/put';
 
 export class DAMediaHandler extends MediaHandler {
-  constructor(config) {
+  constructor(config, req, env, daCtx) {
     super(
       Object.assign(
         {},
@@ -14,7 +15,9 @@ export class DAMediaHandler extends MediaHandler {
         },
       ),
     );
-    this.config = config;
+    this.req = req;
+    this.daCtx = daCtx;
+    this.env = env;
   }
 
   _daBlob(blob) {
@@ -24,6 +27,12 @@ export class DAMediaHandler extends MediaHandler {
     blob.uri = uri;
     // blob.storageKey = ''; TODO
     return blob;
+  }
+
+  async _daUpload(blob) {
+    const blobDaCtx = await getDaCtx(new URL(blob.uri).pathname, this.req, this.env);
+
+    // putObject(this.env, blobDaCtx, blob);
   }
 
   createMediaResource(buffer, contentLength, contentType, sourceUri = '') {
@@ -67,16 +76,19 @@ export class DAMediaHandler extends MediaHandler {
 
   async upload(blob) {
     console.log('uploading ', blob.storageUri);  // TODO
+    this._daUpload(blob);
     return true;
   }
 
   async put(blob) {
     console.log('put ', blob.storageUri);  // TODO
+    this._daUpload(blob);
     return true;
   }
 
   async spool(blob) {
     console.log('spool ', blob.storageUri);  // TODO
+    this._daUpload(blob);
     return true;
   }
 }

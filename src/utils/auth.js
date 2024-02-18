@@ -12,7 +12,7 @@ async function setUser(user_id, headers, env) {
 }
 
 export default async function getUser(req, env) {
-  const authHeader = req.headers.get('authorization');
+  const authHeader = req?.headers.get('authorization');
   if (authHeader) {
     const token = req.headers.get('authorization').split(' ').pop();
     if (!token) return;

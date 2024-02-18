@@ -8,7 +8,6 @@
  * @property {String} ext - The name of the extension.
  */
 
-import getObject from '../storage/object/get';
 import getUser from './auth';
 
 async function getOrgProps(env, org, user) {
@@ -49,7 +48,7 @@ export async function getDaCtx(pathname, req, env) {
   // Set base details
   const daCtx = { api, org, user };
 
-  // Get org properties
+  // Get org propties
   if (org) {
     const { authorized } = await getOrgProps(env, org, user);
     daCtx.authorized = authorized;

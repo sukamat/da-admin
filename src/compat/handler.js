@@ -3,7 +3,7 @@ import { readFile } from 'fs/promises';
 import fs from 'fs';
 import { docx2md } from '@adobe/helix-docx2md';
 import { PipelineState, PipelineRequest, htmlPipe } from '@adobe/helix-html-pipeline';
-import { DAMediaHandler } from './daMediaHandler.js';
+import { DAMediaHandler } from './daMediaHandler';
 
 export class StaticS3Loader {
   constructor(md) {
@@ -60,7 +60,7 @@ async function docx2HTML(req, env, daCtx) {
 
   const sourceDoc = 'mytest';
   const opts = {
-    mediaHandler: new DAMediaHandler(DEFAULT_CONFIG),
+    mediaHandler: new DAMediaHandler(DEFAULT_CONFIG, req, env, daCtx),
   };
   const doc = await readFile(`${sourceDoc}.docx`);
   const md = await docx2md(doc, opts);
@@ -82,4 +82,4 @@ async function docx2HTML(req, env, daCtx) {
   fs.writeFileSync(`${sourceDoc}.html`, html.body);
 }
 
-docx2HTML();
+docx2HTML(null, {}, null);
