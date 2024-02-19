@@ -9,14 +9,14 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import { postSource } from '../routes/source.js';
-import { postConfig } from '../routes/config.js';
 
-export default async function postHandler({ req, env, daCtx }) {
-  const { path } = daCtx;
+import putKv from '../storage/kv/put.js';
+import getKv from '../storage/kv/get.js';
 
-  if (path.startsWith('/source')) return postSource({ req, env, daCtx });
-  if (path.startsWith('/config')) return postConfig({ req, env, daCtx });
+export function postConfig({ req, env, daCtx }) {
+  return putKv(req, env, daCtx);
+}
 
-  return undefined;
+export function getConfig({ env, daCtx }) {
+  return getKv(env, daCtx);
 }

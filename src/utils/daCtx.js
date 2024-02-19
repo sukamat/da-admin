@@ -27,11 +27,18 @@ export default async function getDaCtx(req, env) {
   const sanitized = lower.endsWith('/') ? lower.slice(0, -1) : lower;
 
   // Get base details
-  const [api, org, ...parts] = sanitized.split('/');
+  const split = sanitized.split('/');
+  const api = split.shift();
+  const fullKey = split.join('/');
+  const [org, ...parts] = split;
 
   // Set base details
   const daCtx = {
-    path: pathname, api, org, users,
+    path: pathname,
+    api,
+    org,
+    users,
+    fullKey,
   };
 
   // Get org properties
@@ -53,10 +60,10 @@ export default async function getDaCtx(req, env) {
   [daCtx.site] = path;
 
   // Handle folders and files under a site
-  const split = daCtx.filename.split('.');
-  daCtx.isFile = split.length > 1;
-  if (daCtx.isFile) daCtx.ext = split.pop();
-  daCtx.name = split.join('.');
+  const fileSplit = daCtx.filename.split('.');
+  daCtx.isFile = fileSplit.length > 1;
+  if (daCtx.isFile) daCtx.ext = fileSplit.pop();
+  daCtx.name = fileSplit.join('.');
 
   // Set keys
   daCtx.key = keyBase;
