@@ -3,7 +3,6 @@ import {
   PutObjectCommand,
 } from '@aws-sdk/client-s3';
 
-
 import getS3Config from '../utils/config';
 import { sourceRespObject } from '../../source/helpers';
 
@@ -24,7 +23,7 @@ function buildInput({ org, key, body, type, contentLength }) {
     Key: key, 
     Body: body, 
     ContentType: type, 
-   // ContentLength: contentLength,
+    ContentLength: contentLength,
   };
 }
 
@@ -41,6 +40,7 @@ function createBucketIfMissing(client) {
 }
 
 export default async function putObject(env, daCtx, obj) {
+  console.log('env', env);
   const config = getS3Config(env);
   const client = new S3Client(config);
 
@@ -61,7 +61,7 @@ export default async function putObject(env, daCtx, obj) {
               key,
               body: obj.data,
               type: obj.contentType,
-              // contentLength: obj.data.length,
+              contentLength: obj.data.length,
             },
           ),
         );
@@ -80,7 +80,7 @@ export default async function putObject(env, daCtx, obj) {
           key,
           body: obj.stream,
           type: obj.contentType,
-          contentLength: obj.stream.actualByteCount,
+          contentLength: obj.contentLength,
         }),
       );
     }
@@ -96,12 +96,10 @@ export default async function putObject(env, daCtx, obj) {
   }
 
   for (const input of inputs) {
-    console.log('put input', input);
+    // console.log('putObject', input);
     const command = new PutObjectCommand(input);
-    console.log('put command', command);
     try {
-      const response = await client.send(command);
-      console.log('put response', response);
+      await client.send(command);
     } catch (e) {
       console.log('put error', e);
     }

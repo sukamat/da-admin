@@ -31,8 +31,7 @@ export class DAMediaHandler extends MediaHandler {
 
   async _daUpload(blob) {
     const blobDaCtx = await getDaCtx(new URL(blob.uri).pathname, this.req, this.env);
-
-    // putObject(this.env, blobDaCtx, blob);
+    await putObject(this.env, blobDaCtx, blob);
   }
 
   createMediaResource(buffer, contentLength, contentType, sourceUri = '') {
@@ -48,6 +47,8 @@ export class DAMediaHandler extends MediaHandler {
     const blob = this._daBlob(
       await super.createMediaResourceFromStream(stream, contentLength, contentTypeHint, sourceUri),
     );
+
+    console.log('created blob', blob);
     return blob;
   }
 
@@ -74,19 +75,19 @@ export class DAMediaHandler extends MediaHandler {
 
   async upload(blob) {
     console.log('uploading ', blob.storageUri);  // TODO
-    this._daUpload(blob);
+    await this._daUpload(blob);
     return true;
   }
 
   async put(blob) {
     console.log('put ', blob.storageUri);  // TODO
-    this._daUpload(blob);
+    await this._daUpload(blob);
     return true;
   }
 
   async spool(blob) {
     console.log('spool ', blob.storageUri);  // TODO
-    this._daUpload(blob);
+    await this._daUpload(blob);
     return true;
   }
 }

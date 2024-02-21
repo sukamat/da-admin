@@ -2,10 +2,6 @@ import { PassThrough, Transform } from 'stream';
 import mime from 'mime';
 import {createHash} from "sha1-uint8array";
 
-const crypto = {
-  createHash: createHash
-}
-
 import sizeOf from 'image-size';
 
 sizeOf.disableFS(true);
@@ -125,6 +121,9 @@ export class MediaHandler {
     }
 
     // TODO: crypto is not supported in wrangler, added polyfill, but it's not creating the same hash 
+    const crypto = {
+      createHash: createHash
+    }
     const contentHash = crypto.createHash('sha1')
       // .update(String(contentLength))
       .update(hashBuffer)

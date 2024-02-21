@@ -122,6 +122,5 @@ async function docx2HTML(req, env, daCtx) {
 
 
   const htmlDACtx = htmlDACtxFromDocx(daCtx);
-  putObject(env, htmlDACtx, { data: html.body, contentType: 'text/html'});
-  return { body: '', status: 201, contentType: 'application/json' }
+  return await putObject(env, htmlDACtx, { data: html.body, contentType: 'text/html'});
 }
