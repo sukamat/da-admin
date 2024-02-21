@@ -5,10 +5,6 @@ import deleteObject from '../storage/object/delete';
 import putHelper from './helpers';
 
 export default async function sourceHandler(req, env, daCtx) {
-  console.log('sourceHandler req:', req);
-  console.log('sourceHandler env:',  env);
-  console.log('sourceHandler daCtx:', daCtx);
-
   if (req.method === 'OPTIONS') return { body: '', status: 204 };
   if (req.method === 'DELETE') return deleteObject(env, daCtx);
   if (req.method === 'GET') return getObject(env, daCtx);

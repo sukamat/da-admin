@@ -3,9 +3,11 @@ import { getDaCtx } from './utils/daCtx';
 import sourceHandler from './source/handler';
 import listHandler from './list/handler';
 import authHandler from './auth/handler';
+import compatHandler from './compat/handler';
 
 import { get404, daResp, getRobots } from './responses';
 import copyHandler from './copy/handler';
+import common from 'mocha/lib/interfaces/common';
 
 export default {
   async fetch(req, env) {
@@ -33,6 +35,11 @@ export default {
 
     if (pathname.startsWith('/auth')) {
       const respProps = await authHandler(req, env, daCtx);
+      return daResp(respProps);
+    }
+
+    if (pathname.startsWith('/compat')) {
+      const respProps = await compatHandler(req, env, daCtx);
       return daResp(respProps);
     }
 

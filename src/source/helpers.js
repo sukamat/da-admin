@@ -37,13 +37,19 @@ function getFormEntries(formData) {
     entries.props = JSON.parse(formData.get('props'));
   }
 
+  if (formData.get('file')) {
+    entries.file = formData.get('file');
+  }
+
   return entries
 }
 
 async function formPutHandler(req) {
   let formData;
   try {
+    console.log('Reading data...');
     formData = await req.formData();
+    console.log('Finished reading data.', formData);
   } catch (e) {
     console.log('No form data', e);
   }

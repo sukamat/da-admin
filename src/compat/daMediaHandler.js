@@ -1,7 +1,7 @@
 import mime from 'mime';
-import { MediaHandler } from '@adobe/helix-mediahandler';
 import { getDaCtx } from '../utils/daCtx';
 import putObject from '../storage/object/put';
+import { MediaHandler } from './hlxMediaHandler';
 
 export class DAMediaHandler extends MediaHandler {
   constructor(config, req, env, daCtx) {
@@ -48,8 +48,6 @@ export class DAMediaHandler extends MediaHandler {
     const blob = this._daBlob(
       await super.createMediaResourceFromStream(stream, contentLength, contentTypeHint, sourceUri),
     );
-
-    console.log('created blob', blob);
     return blob;
   }
 

@@ -1,11 +1,22 @@
 // import { html2docx } from '@adobe/helix-importer';
-import { readFile } from 'fs/promises';
-import fs from 'fs';
+// import { readFile } from 'fs/promises';
+
 import { docx2md } from '@adobe/helix-docx2md';
 import { PipelineState, PipelineRequest, htmlPipe } from '@adobe/helix-html-pipeline';
 import { DAMediaHandler } from './daMediaHandler';
+import putObject from '../storage/object/put';
 
-export class StaticS3Loader {
+// hack: override Buffer.toString to avoid exception in setXSurrogateKeyHeader in the html-pipeline
+const originalToString = Buffer.prototype.toString;
+Buffer.prototype.toString = function(encoding) {
+  if (encoding === 'base64url') {
+    console.log('base64url invoked');
+    return '';
+  }
+  return originalToString.call(this, encoding);
+ }
+
+class StaticS3Loader {
   constructor(md) {
     this.md = md;
   }
@@ -28,7 +39,6 @@ export class StaticS3Loader {
 // import getObject from '../storage/object/get';
 // import putObject from '../storage/object/put';
 
-// import putHelper from './helpers';
 
 // async function getDocx(env, daCtx) {
 //   const s3Response = getObject(env, daCtx);
@@ -41,13 +51,31 @@ export class StaticS3Loader {
 //   console.log('result', result);
 // }
 
-export default async function sourceHandler(req, env, daCtx) {
+export default async function compatHandler(req, env, daCtx) {
   if (req.method === 'OPTIONS') return { body: '', status: 204 };
   if (req.method === 'GET') return {  }
   if (req.method === 'PUT') {
-    const obj = await putHelper(req, env, daCtx);
-    return putObject(env, daCtx, obj);
+    return docx2HTML(req, env, daCtx);
   }
+}
+
+function htmlDACtxFromDocx(ctx) {
+  const daCtx = { ...ctx };
+
+  for (let key in daCtx) {
+      if (typeof daCtx[key] === 'string') {
+        daCtx[key] = daCtx[key].replace('.docx', '.html');
+      }
+  }
+  return daCtx;
+}
+
+async function readDocx(req) {
+  const formData = await req.formData();
+  const file = formData.get('file');
+  const data = await file.arrayBuffer();
+  const docx = Buffer.from(new Uint8Array(data))
+  return docx;
 }
 
 async function docx2HTML(req, env, daCtx) {
@@ -58,13 +86,17 @@ async function docx2HTML(req, env, daCtx) {
     ref: 'main',
   };
 
-  const sourceDoc = 'mytest';
   const opts = {
     mediaHandler: new DAMediaHandler(DEFAULT_CONFIG, req, env, daCtx),
   };
-  const doc = await readFile(`${sourceDoc}.docx`);
-  const md = await docx2md(doc, opts);
 
+  const doc = await readDocx(req);
+  let md = await docx2md(doc, opts);
+
+  // hack: keep the metadata in the document, and not have it extracted by the pipeline
+  md = md.replace('<td colspan="2">Metadata</td>', '<td colspan="2">.da.keep.Metadata</td>')
+
+  const url = req.url.replace('.docx', '.plain.html');
   const DEFAULT_STATE = new PipelineState({
     config: DEFAULT_CONFIG,
     site: 'site',
@@ -72,14 +104,24 @@ async function docx2HTML(req, env, daCtx) {
     ref: 'main',
     partition: 'source',
     s3Loader: new StaticS3Loader(md),
+    path: new URL(url).pathname,
   });
+  const request = new PipelineRequest(url);
 
-  const request = new PipelineRequest('https://www.example.com/index.html');
-
-  // const dast = await docx2dast(doc, opts);
-  // const mdast = await dast2mdast(dast, opts);
   const html = await htmlPipe(DEFAULT_STATE, request);
-  fs.writeFileSync(`${sourceDoc}.html`, html.body);
-}
+  html.body = html.body.replace('da-keep-metadata', 'metadata');
 
-docx2HTML(null, {}, null);
+  html.body = 
+`<body>
+  <header></header>
+  <main>
+    ${html.body}
+  </main>
+  <footer></footer>
+</body>`;
+
+
+  const htmlDACtx = htmlDACtxFromDocx(daCtx);
+  putObject(env, htmlDACtx, { data: html.body, contentType: 'text/html'});
+  return { body: '', status: 201, contentType: 'application/json' }
+}

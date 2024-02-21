@@ -19,7 +19,13 @@ function getObjectBody(data) {
 
 function buildInput({ org, key, body, type, contentLength }) {
   const Bucket = `${org}-content`;
-  return { Bucket, Key: key, Body: body, ContentType: type, ContentLength: contentLength };
+  return { 
+    Bucket, 
+    Key: key, 
+    Body: body, 
+    ContentType: type, 
+   // ContentLength: contentLength,
+  };
 }
 
 function createBucketIfMissing(client) {
@@ -47,9 +53,25 @@ export default async function putObject(env, daCtx, obj) {
 
   if (obj) {
     if (obj.data) {
-      const isFile = obj.data instanceof File;
-      const { body, type } = isFile ? await getFileBody(obj.data) : getObjectBody(obj.data);
-      inputs.push(buildInput({ org, key, body, type }));
+      if (obj.contentType === 'text/html') {
+        inputs.push(
+          buildInput(
+            { 
+              org,
+              key,
+              body: obj.data,
+              type: obj.contentType,
+              // contentLength: obj.data.length,
+            },
+          ),
+        );
+      } else if (obj.data instanceof File) {
+        const { body, type } = await getFileBody(obj.data);
+        inputs.push(buildInput({ org, key, body, type }));
+      } else {
+        const { body, type } = getObjectBody(obj.data);
+        inputs.push(buildInput({ org, key, body, type }));
+      }
     }
     if (obj.stream) {
       inputs.push(
@@ -74,8 +96,15 @@ export default async function putObject(env, daCtx, obj) {
   }
 
   for (const input of inputs) {
+    console.log('put input', input);
     const command = new PutObjectCommand(input);
-    await client.send(command);
+    console.log('put command', command);
+    try {
+      const response = await client.send(command);
+      console.log('put response', response);
+    } catch (e) {
+      console.log('put error', e);
+    }
   }
 
   const body = sourceRespObject(daCtx, obj?.props);
