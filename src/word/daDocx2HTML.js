@@ -42,7 +42,7 @@ async function readDocx(req) {
   const formData = await req.formData();
   const file = formData.get('file');
   if (file.name.split('.').pop() !== 'docx') {
-    return { error: 'Invalid file upload. Expected a docx file' }
+    return { error: 'Invalid file upload. Expected a docx file' };
   }
   const data = await file.arrayBuffer();
   const doc = Buffer.from(new Uint8Array(data));
@@ -52,7 +52,7 @@ async function readDocx(req) {
 export default async function putDocx2HTML(req, env, daCtx) {
   const { error, doc } = await readDocx(req);
   if (error) {
-    return { body: JSON.stringify({ error }), status: 400,  contentType: 'application/json' };
+    return { body: JSON.stringify({ error }), status: 400, contentType: 'application/json' };
   }
 
   const DEFAULT_CONFIG = {
