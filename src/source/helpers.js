@@ -47,9 +47,7 @@ function getFormEntries(formData) {
 async function formPutHandler(req) {
   let formData;
   try {
-    console.log('Reading data...');
     formData = await req.formData();
-    console.log('Finished reading data.', formData);
   } catch (e) {
     console.log('No form data', e);
   }

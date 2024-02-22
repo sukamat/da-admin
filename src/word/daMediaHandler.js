@@ -18,7 +18,6 @@ export class DAMediaHandler extends MediaHandler {
       ),
     );
     this.req = req;
-    this.daCtx = daCtx;
     this.env = env;
     this.folder = path.dirname(daCtx.aemPathname);
   }

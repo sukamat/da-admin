@@ -6,7 +6,6 @@ import authHandler from './auth/handler';
 
 import { get404, daResp, getRobots } from './responses';
 import copyHandler from './copy/handler';
-import common from 'mocha/lib/interfaces/common';
 
 export default {
   async fetch(req, env) {
