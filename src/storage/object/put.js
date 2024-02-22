@@ -40,7 +40,6 @@ function createBucketIfMissing(client) {
 }
 
 export default async function putObject(env, daCtx, obj) {
-  console.log('env', env);
   const config = getS3Config(env);
   const client = new S3Client(config);
 
@@ -53,7 +52,10 @@ export default async function putObject(env, daCtx, obj) {
 
   if (obj) {
     if (obj.data) {
-      if (obj.contentType === 'text/html') {
+      if (obj.data instanceof File) {
+        const { body, type } = await getFileBody(obj.data);
+        inputs.push(buildInput({ org, key, body, type }));
+      } else if (obj.contentType) {
         inputs.push(
           buildInput(
             { 
@@ -65,9 +67,6 @@ export default async function putObject(env, daCtx, obj) {
             },
           ),
         );
-      } else if (obj.data instanceof File) {
-        const { body, type } = await getFileBody(obj.data);
-        inputs.push(buildInput({ org, key, body, type }));
       } else {
         const { body, type } = getObjectBody(obj.data);
         inputs.push(buildInput({ org, key, body, type }));
@@ -96,7 +95,7 @@ export default async function putObject(env, daCtx, obj) {
   }
 
   for (const input of inputs) {
-    // console.log('putObject', input);
+    console.log('putObject', input);
     const command = new PutObjectCommand(input);
     try {
       await client.send(command);

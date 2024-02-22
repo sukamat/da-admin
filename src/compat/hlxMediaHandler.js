@@ -1,4 +1,3 @@
-import { PassThrough, Transform } from 'stream';
 import mime from 'mime';
 import {createHash} from "sha1-uint8array";
 
@@ -125,7 +124,7 @@ export class MediaHandler {
       createHash: createHash
     }
     const contentHash = crypto.createHash('sha1')
-      // .update(String(contentLength))
+      .update(String(contentLength))
       .update(hashBuffer)
       .digest('hex');
     const hash = `1${contentHash}`;
@@ -147,11 +146,10 @@ export class MediaHandler {
     if (!contentLength) {
       throw Error('createExternalResourceFromStream() needs contentLength');
     }
+    const readMax = Math.min(contentLength, 8192);
     // in order to compute hash, we need to read at least 8192 bytes
-    const partialBuffer = await new Promise((resolve, reject) => {
+    const fullBuffer = await new Promise((resolve, reject) => {
       const chunks = [];
-      let read = 0;
-      const readMax = Math.min(contentLength, 8192);
 
       const done = () => {
         // eslint-disable-next-line no-use-before-define
@@ -159,7 +157,6 @@ export class MediaHandler {
         // eslint-disable-next-line no-use-before-define
         stream.removeListener('end', onEnd);
         const buf = Buffer.concat(chunks);
-        stream.unshift(buf);
         resolve(buf);
       };
       /* c8 ignore next 3 */
@@ -171,11 +168,6 @@ export class MediaHandler {
         // eslint-disable-next-line yoda, no-cond-assign
         while (null !== (chunk = stream.read())) {
           chunks.push(chunk);
-          read += chunk.length;
-          if (read >= readMax) {
-            done();
-            break;
-          }
         }
       };
 
@@ -187,14 +179,14 @@ export class MediaHandler {
     });
 
     // compute hash
-    const resource = this._initMediaResource(partialBuffer, contentLength);
+    const resource = this._initMediaResource(fullBuffer.slice(0, readMax), contentLength);
 
     // try to detect dimensions
-    const { type, ...dims } = this._getDimensions(partialBuffer, '');
+    const { type, ...dims } = this._getDimensions(fullBuffer.slice(0, readMax), '');
 
     return MediaHandler.updateBlobURI({
       sourceUri,
-      stream,
+      data: fullBuffer,
       contentType: MediaHandler.getContentType(type, contentType, sourceUri),
       ...resource,
       meta: {

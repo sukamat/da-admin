@@ -1,3 +1,4 @@
+import path from 'path';
 import mime from 'mime';
 import { getDaCtx } from '../utils/daCtx';
 import putObject from '../storage/object/put';
@@ -18,11 +19,12 @@ export class DAMediaHandler extends MediaHandler {
     this.req = req;
     this.daCtx = daCtx;
     this.env = env;
+    this.folder = path.dirname(daCtx.aemPathname);
   }
 
   _daBlob(blob) {
     const ext = mime.getExtension(blob.contentType) || 'bin';
-    const uri = `https://admin.da.live/source/${blob.owner}/${blob.repo}/media_${blob.hash}.${ext}`;
+    const uri = `https://admin.da.live/source/${blob.owner}/${blob.repo}${path.join(this.folder, `/da_media_${blob.hash}.${ext}`)}`;
     blob.storageUri = uri;
     blob.uri = uri;
     // blob.storageKey = ''; TODO
