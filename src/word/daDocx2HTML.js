@@ -54,6 +54,7 @@ export default async function putDocx2HTML(req, env, daCtx) {
     owner: daCtx.org, // ?? TODO: How to retrieve this in hlx5?
     repo: daCtx.site, // ?? TODO: How to retrieve this in hlx5?
     ref: 'main',
+    bucketId: `${daCtx.org}-content`,
   };
 
   let md = await docx2md(

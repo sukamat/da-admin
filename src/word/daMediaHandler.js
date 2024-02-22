@@ -32,10 +32,12 @@ export class DAMediaHandler extends MediaHandler {
 
   _daBlob(blob) {
     const ext = mime.getExtension(blob.contentType) || 'bin';
-    const uri = `https://admin.da.live/source/${blob.owner}/${blob.repo}${path.join(this.folder, `/media_${blob.hash}.${ext}`)}`;
-    blob.storageUri = uri;
+
+    const key = `${blob.repo}${path.join(this.folder, `/media_${blob.hash}.${ext}`)}`;
+    const uri = `https://admin.da.live/source/${blob.owner}/${key}`;
     blob.uri = uri;
-    blob.storageKey = ''; // TODO
+    blob.storageKey = key;
+    blob.storageUri = `s3://${this._bucketId}/${key}`;
     return blob;
   }
 
