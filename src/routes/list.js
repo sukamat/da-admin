@@ -9,20 +9,10 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-export class DAMockStaticS3Loader {
-  constructor(md) {
-    this.md = md;
-  }
+import listBuckets from '../storage/bucket/list.js';
+import listObjects from '../storage/object/list.js';
 
-  async getObject(bucketId, key) {
-    return {
-      status: 200,
-      body: this.md,
-      headers: new Map(),
-    };
-  }
-
-  async headObject(bucketId, key) {
-    return this.getObject();
-  }
+export default function getList({ env, daCtx }) {
+  if (!daCtx.org) return listBuckets(env, daCtx);
+  return listObjects(env, daCtx);
 }

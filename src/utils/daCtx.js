@@ -1,57 +1,57 @@
-/**
- * @typedef {Object} DaCtx
- * @property {String} api - The API being requested.
- * @property {String} org - The organization or owner of the content.
- * @property {String} site - The site context.
- * @property {String} path - The path to the resource relative to the site.
- * @property {String} name - The name of the resource being requested.
- * @property {String} ext - The name of the extension.
+/*
+ * Copyright 2024 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
  */
 
-import getUser from './auth';
-
-async function getOrgProps(env, org, user) {
-  const DEFAULT_AUTH = { authorized: true };
-  if (!org) return DEFAULT_AUTH;
-
-  const propsVal = await env.DA_AUTH.get(`${org}-da-props`);
-  if (!propsVal) return DEFAULT_AUTH;
-
-  const props = JSON.parse(propsVal);
-  console.log(props);
-  if (!props) return DEFAULT_AUTH;
-
-  const admins = props['admin.role.all'];
-  if (!admins) return DEFAULT_AUTH;
-
-  const authorized = admins.some((orgUser) => orgUser === user.email);
-  return { authorized };
-}
+import { getUsers, isAuthorized } from './auth.js';
 
 /**
  * Gets Dark Alley Context
- * @param {pathname} pathname
+ * @param {Request} req The request object.
+ * @param {Object} env The DA environment object.
+ * @param {pathname} pathname if different than the pathanem of req.url
  * @returns {DaCtx} The Dark Alley Context.
  */
-export async function getDaCtx(pathname, req, env) {
-  const user = await getUser(req, env);
+export default async function getDaCtx(req, env, pathname = '') {
+  if (!pathname) {
+    pathname = new URL(req.url).pathname;
+  }
 
-  console.log(user);
+  const users = await getUsers(req, env);
 
   // Santitize the string
   const lower = pathname.slice(1).toLowerCase();
   const sanitized = lower.endsWith('/') ? lower.slice(0, -1) : lower;
 
   // Get base details
-  const [api, org, ...parts] = sanitized.split('/');
+  const split = sanitized.split('/');
+  const api = split.shift();
+  const fullKey = split.join('/');
+  const [org, ...parts] = split;
 
   // Set base details
-  const daCtx = { api, org, user };
+  const daCtx = {
+    path: pathname,
+    api,
+    org,
+    users,
+    fullKey,
+  };
 
-  // Get org propties
-  if (org) {
-    const { authorized } = await getOrgProps(env, org, user);
-    daCtx.authorized = authorized;
+  // Get org properties
+  daCtx.authorized = true;
+  // check for all users in the session if they are authorized
+  for (const user of users) {
+    if (!await isAuthorized(env, org, user)) {
+      daCtx.authorized = false;
+    }
   }
 
   // Sanitize the remaining path parts
@@ -61,13 +61,13 @@ export async function getDaCtx(pathname, req, env) {
   // Get the final source name
   daCtx.filename = path.pop() || '';
 
-  daCtx.site = path[0];
+  [daCtx.site] = path;
 
   // Handle folders and files under a site
-  const split = daCtx.filename.split('.');
-  daCtx.isFile = split.length > 1;
-  if (daCtx.isFile) daCtx.ext = split.pop();
-  daCtx.name = split.join('.');
+  const fileSplit = daCtx.filename.split('.');
+  daCtx.isFile = fileSplit.length > 1;
+  if (daCtx.isFile) daCtx.ext = fileSplit.pop();
+  daCtx.name = fileSplit.join('.');
 
   // Set keys
   daCtx.key = keyBase;

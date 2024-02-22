@@ -1,6 +1,17 @@
+/*
+ * Copyright 2024 Adobe. All rights reserved.
+ * This file is licensed to you under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy
+ * of the License at http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under
+ * the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR REPRESENTATIONS
+ * OF ANY KIND, either express or implied. See the License for the specific language
+ * governing permissions and limitations under the License.
+ */
 import path from 'path';
 import mime from 'mime';
-import { getDaCtx } from '../utils/daCtx';
+import getDaCtx from '../utils/daCtx';
 import putObject from '../storage/object/put';
 import { MediaHandler } from './hlxMediaHandler';
 import getObject from '../storage/object/get';
@@ -32,7 +43,7 @@ export class DAMediaHandler extends MediaHandler {
   }
 
   async _daUpload(blob) {
-    const blobDaCtx = await getDaCtx(new URL(blob.uri).pathname, this.req, this.env);
+    const blobDaCtx = await getDaCtx(this.req, this.env, new URL(blob.uri).pathname);
     const response = await putObject(this.env, blobDaCtx, blob);
     return response && response.status === 201;
   }
@@ -59,7 +70,8 @@ export class DAMediaHandler extends MediaHandler {
   }
 
   async checkBlobExists(blob) {
-    const blobDaCtx = await getDaCtx(new URL(blob.uri).pathname, this.req, this.env);
+    return false;
+    const blobDaCtx = await getDaCtx(this.req, this.env, new URL(blob.uri).pathname);
     const response = await getObject(this.env, blobDaCtx);
     if (!response) return false;
     return response.status === 200;

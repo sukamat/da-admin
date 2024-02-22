@@ -9,20 +9,9 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-export class DAMockStaticS3Loader {
-  constructor(md) {
-    this.md = md;
-  }
 
-  async getObject(bucketId, key) {
-    return {
-      status: 200,
-      body: this.md,
-      headers: new Map(),
-    };
-  }
-
-  async headObject(bucketId, key) {
-    return this.getObject();
-  }
+export default async function getKv(env, daCtx) {
+  const body = await env.DA_CONFIG.get(daCtx.fullKey);
+  if (body) return { body, status: 200 };
+  return { body: JSON.stringify({ error: 'not found' }), status: 404 };
 }

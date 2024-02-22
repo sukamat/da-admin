@@ -9,20 +9,20 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-export class DAMockStaticS3Loader {
-  constructor(md) {
-    this.md = md;
+export default function daResp({
+  status,
+  body = '',
+  contentType = 'application/json',
+  contentLength,
+}) {
+  const headers = new Headers();
+  headers.append('Access-Control-Allow-Origin', '*');
+  headers.append('Access-Control-Allow-Methods', 'HEAD, GET, PUT, POST, DELETE');
+  headers.append('Access-Control-Allow-Headers', '*');
+  headers.append('Content-Type', contentType);
+  if (contentLength) {
+    headers.append('Content-Length', contentLength);
   }
 
-  async getObject(bucketId, key) {
-    return {
-      status: 200,
-      body: this.md,
-      headers: new Map(),
-    };
-  }
-
-  async headObject(bucketId, key) {
-    return this.getObject();
-  }
+  return new Response(body, { status, headers });
 }

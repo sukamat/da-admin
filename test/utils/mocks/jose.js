@@ -9,20 +9,15 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-export class DAMockStaticS3Loader {
-  constructor(md) {
-    this.md = md;
-  }
+const decodeJwt = (token) => {
+  let [email, created_at = 0, expires_in = 0] = token.split(':');
+  created_at += Math.floor(new Date().getTime() / 1000);
+  expires_in += created_at;
+  return {
+    user_id: email,
+    created_at,
+    expires_in: expires_in || created_at + 1000,
+  };
+};
 
-  async getObject(bucketId, key) {
-    return {
-      status: 200,
-      body: this.md,
-      headers: new Map(),
-    };
-  }
-
-  async headObject(bucketId, key) {
-    return this.getObject();
-  }
-}
+export default { decodeJwt };

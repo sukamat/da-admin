@@ -9,20 +9,12 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-export class DAMockStaticS3Loader {
-  constructor(md) {
-    this.md = md;
-  }
+import { deleteSource } from '../routes/source.js';
 
-  async getObject(bucketId, key) {
-    return {
-      status: 200,
-      body: this.md,
-      headers: new Map(),
-    };
-  }
+export default async function deleteHandler({ env, daCtx }) {
+  const { path } = daCtx;
 
-  async headObject(bucketId, key) {
-    return this.getObject();
-  }
+  if (path.startsWith('/source')) return deleteSource({ env, daCtx });
+
+  return undefined;
 }
