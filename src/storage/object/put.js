@@ -95,7 +95,6 @@ export default async function putObject(env, daCtx, obj) {
   }
 
   for (const input of inputs) {
-    console.log('putObject', input);
     const command = new PutObjectCommand(input);
     try {
       await client.send(command);

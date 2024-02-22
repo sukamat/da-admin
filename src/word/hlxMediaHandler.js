@@ -8,17 +8,10 @@ sizeOf.disableFS(true);
 // cache external urls
 const blobCache = {};
 
-// request counter for logging
-let requestCounter = 0;
-
-const FETCH_CACHE_SIZE = 10 * 1024 * 1024; // 10mb
-
-/**
- * Number of retries in fetchHeader
+/* Partial copy/reimplementation of https://github.com/adobe/helix-mediahandler/blob/main/src/MediaHandler.js
+ * due to wrangler limitations with using native node modules (e.g. crypto, Buffer, http2, etc.).
+ * TODO: it would be nice to have a way to use the original MediaHandler.js
  */
-const MAX_RETRIES = 3;
-
-
 export class MediaHandler {
   constructor(opts = {}) {
     Object.assign(this, {
@@ -65,7 +58,6 @@ export class MediaHandler {
       blobCache[this._contentBusId] = {};
       this._cache = blobCache[this._contentBusId];
     }
-
   }
 
   static updateBlobURI(blob) {
@@ -88,15 +80,6 @@ export class MediaHandler {
     if (!data) {
       return {};
     }
-    // const info = new Parser(data, this._log).parse();
-    // if (info) {
-    //   return {
-    //     width: String(info.width),
-    //     height: String(info.height),
-    //     duration: String(info.duration),
-    //     type: info.mimeType,
-    //   };
-    // }
 
     try {
       const dimensions = sizeOf(data);
@@ -119,7 +102,7 @@ export class MediaHandler {
       hashBuffer = hashBuffer.slice(0, 8192);
     }
 
-    // TODO: crypto is not supported in wrangler, added polyfill, but it's not creating the same hash 
+    // crypto is not supported in wrangler, added polyfill
     const crypto = {
       createHash: createHash
     }
@@ -142,12 +125,45 @@ export class MediaHandler {
     });
   }
 
+  /**
+   * Creates an external resource from the given buffer and properties.
+   * @param {Buffer} buffer - buffer with data
+   * @param {number} [contentLength] - Size of blob.
+   * @param {string} [contentType] - content type
+   * @param {string} [sourceUri] - source uri
+   * @returns {MediaResource} the external resource object.
+   */
+  createMediaResource(buffer, contentLength, contentType, sourceUri = '') {
+    if (!contentLength) {
+      // eslint-disable-next-line no-param-reassign
+      contentLength = buffer.length;
+    }
+  
+    // compute hash
+    const resource = this._initMediaResource(buffer, contentLength);
+  
+    // try to detect dimensions
+    const { type, ...dims } = this._getDimensions(buffer, '');
+  
+    return MediaHandler.updateBlobURI({
+      sourceUri,
+      data: buffer.length === contentLength ? buffer : null,
+      contentType: MediaHandler.getContentType(type, contentType, sourceUri),
+      ...resource,
+      meta: {
+        alg: '8k',
+        agent: this._blobAgent,
+        src: sourceUri,
+        ...dims,
+      },
+    });
+  }
+
   async createMediaResourceFromStream(stream, contentLength, contentType, sourceUri = '') {
     if (!contentLength) {
       throw Error('createExternalResourceFromStream() needs contentLength');
     }
-    const readMax = Math.min(contentLength, 8192);
-    // in order to compute hash, we need to read at least 8192 bytes
+
     const fullBuffer = await new Promise((resolve, reject) => {
       const chunks = [];
 
@@ -178,24 +194,7 @@ export class MediaHandler {
       });
     });
 
-    // compute hash
-    const resource = this._initMediaResource(fullBuffer.slice(0, readMax), contentLength);
-
-    // try to detect dimensions
-    const { type, ...dims } = this._getDimensions(fullBuffer.slice(0, readMax), '');
-
-    return MediaHandler.updateBlobURI({
-      sourceUri,
-      data: fullBuffer,
-      contentType: MediaHandler.getContentType(type, contentType, sourceUri),
-      ...resource,
-      meta: {
-        alg: '8k',
-        agent: this._blobAgent,
-        src: sourceUri,
-        ...dims,
-      },
-    });
+    return this.createMediaResource(fullBuffer, contentLength, contentType, sourceUri);
   }
 
     /**

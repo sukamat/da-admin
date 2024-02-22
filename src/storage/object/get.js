@@ -11,7 +11,6 @@ function buildInput({ org, key }) {
 }
 
 export default async function getObject(env, { org, key }) {
-  console.log('getObject', org, key);
   const config = getS3Config(env);
   const client = new S3Client(config);
 
@@ -20,7 +19,6 @@ export default async function getObject(env, { org, key }) {
 
   try {
     const resp = await client.send(command);
-    console.log('resp', resp);
     return {
       body: resp.Body,
       status: resp.$metadata.httpStatusCode,
