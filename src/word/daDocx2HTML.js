@@ -41,13 +41,19 @@ function htmlDACtxFromDocx(ctx) {
 async function readDocx(req) {
   const formData = await req.formData();
   const file = formData.get('file');
+  if (file.name.split('.').pop() !== 'docx') {
+    return { error: 'Invalid file upload. Expected a docx file' }
+  }
   const data = await file.arrayBuffer();
-  const docx = Buffer.from(new Uint8Array(data));
-  return docx;
+  const doc = Buffer.from(new Uint8Array(data));
+  return { doc };
 }
 
 export default async function putDocx2HTML(req, env, daCtx) {
-  const doc = await readDocx(req);
+  const { error, doc } = await readDocx(req);
+  if (error) {
+    return { body: JSON.stringify({ error }), status: 400,  contentType: 'application/json' };
+  }
 
   const DEFAULT_CONFIG = {
     contentBusId: 'foo-id',
