@@ -21,6 +21,7 @@ import { getUsers, isAuthorized } from './auth.js';
  */
 export default async function getDaCtx(req, env, pathname = '') {
   if (!pathname) {
+    // eslint-disable-next-line no-param-reassign
     pathname = new URL(req.url).pathname;
   }
 

@@ -10,7 +10,7 @@
  * governing permissions and limitations under the License.
  */
 import mime from 'mime';
-import {createHash} from "sha1-uint8array";
+import { createHash } from 'sha1-uint8array';
 
 import sizeOf from 'image-size';
 
@@ -57,7 +57,7 @@ export class MediaHandler {
       // resource name prefix
       _namePrefix: opts.namePrefix || '',
 
-      _blobAgent: opts.blobAgent || `da-media-handler`,
+      _blobAgent: opts.blobAgent || 'da-media-handler',
     });
 
     if (!this._owner || !this._repo || !this._ref || !this._contentBusId) {
@@ -83,6 +83,7 @@ export class MediaHandler {
     if (blob.meta && blob.meta.width && blob.meta.height && !blob.contentType?.match(/^video\/[^/]+$/)) {
       fragment = `#width=${blob.meta.width}&height=${blob.meta.height}`;
     }
+    // eslint-disable-next-line no-param-reassign
     blob.uri = `https://${ref}--${repo}--${owner}.hlx.page/media_${hash}.${ext}${fragment}`;
     return blob;
   }
@@ -114,9 +115,7 @@ export class MediaHandler {
     }
 
     // crypto is not supported in wrangler, added polyfill
-    const crypto = {
-      createHash: createHash
-    }
+    const crypto = { createHash };
     const contentHash = crypto.createHash('sha1')
       .update(String(contentLength))
       .update(hashBuffer)
@@ -149,13 +148,13 @@ export class MediaHandler {
       // eslint-disable-next-line no-param-reassign
       contentLength = buffer.length;
     }
-  
+
     // compute hash
     const resource = this._initMediaResource(buffer, contentLength);
-  
+
     // try to detect dimensions
     const { type, ...dims } = this._getDimensions(buffer, '');
-  
+
     return MediaHandler.updateBlobURI({
       sourceUri,
       data: buffer.length === contentLength ? buffer : null,
@@ -208,18 +207,18 @@ export class MediaHandler {
     return this.createMediaResource(fullBuffer, contentLength, contentType, sourceUri);
   }
 
-    /**
+  /**
    * Returns the best content type. Prioritizes the detected content type over the hinted one over
    * the one derived from the uri. By also favoring non application/octet-stream ones.
    */
-    static getContentType(detectedType, hintedType, uri) {
-      const uriType = mime.getType(uri);
-      // get first non octet stream type
-      for (const type of [detectedType, hintedType, uriType]) {
-        if (type && type !== 'application/octet-stream') {
-          return type;
-        }
+  static getContentType(detectedType, hintedType, uri) {
+    const uriType = mime.getType(uri);
+    // get first non octet stream type
+    for (const type of [detectedType, hintedType, uriType]) {
+      if (type && type !== 'application/octet-stream') {
+        return type;
       }
-      return 'application/octet-stream';
     }
+    return 'application/octet-stream';
+  }
 }

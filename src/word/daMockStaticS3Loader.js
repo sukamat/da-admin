@@ -14,7 +14,7 @@ export class DAMockStaticS3Loader {
     this.md = md;
   }
 
-  async getObject(bucketId, key) {
+  async getObject(/* bucketId, key */) {
     return {
       status: 200,
       body: this.md,
@@ -22,7 +22,7 @@ export class DAMockStaticS3Loader {
     };
   }
 
-  async headObject(bucketId, key) {
+  async headObject(/* bucketId, key */) {
     return this.getObject();
   }
 }

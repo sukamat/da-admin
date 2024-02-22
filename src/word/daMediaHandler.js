@@ -9,25 +9,22 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+
+/* eslint-disable no-param-reassign, no-console, class-methods-use-this */
 import path from 'path';
 import mime from 'mime';
-import getDaCtx from '../utils/daCtx';
-import putObject from '../storage/object/put';
-import { MediaHandler } from './hlxMediaHandler';
-import getObject from '../storage/object/get';
+import getDaCtx from '../utils/daCtx.js';
+import putObject from '../storage/object/put.js';
+import { MediaHandler } from './hlxMediaHandler.js';
+import getObject from '../storage/object/get.js';
 
 export class DAMediaHandler extends MediaHandler {
   constructor(config, req, env, daCtx) {
-    super(
-      Object.assign(
-        {},
-        config,
-        { 
-          disableR2: true,
-          contentBusId: 'dummy'
-        },
-      ),
-    );
+    super({
+      ...config,
+      disableR2: true,
+      contentBusId: 'dummy',
+    });
     this.req = req;
     this.env = env;
     this.folder = path.dirname(daCtx.aemPathname);
@@ -70,7 +67,6 @@ export class DAMediaHandler extends MediaHandler {
   }
 
   async checkBlobExists(blob) {
-    return false;
     const blobDaCtx = await getDaCtx(this.req, this.env, new URL(blob.uri).pathname);
     const response = await getObject(this.env, blobDaCtx);
     if (!response) return false;
@@ -88,14 +84,14 @@ export class DAMediaHandler extends MediaHandler {
   }
 
   async upload(blob) {
-    return await this._daUpload(blob);
+    return this._daUpload(blob);
   }
 
   async put(blob) {
-    return await this._daUpload(blob);
+    return this._daUpload(blob);
   }
 
   async spool(blob) {
-    return await this._daUpload(blob);
+    return this._daUpload(blob);
   }
 }
