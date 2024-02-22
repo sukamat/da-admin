@@ -35,7 +35,6 @@ function htmlDACtxFromDocx(ctx) {
   }
 
   daCtx.ext = 'html';
-  console.log('htmlDACtxFromDocx', daCtx);
   return daCtx;
 }
 
