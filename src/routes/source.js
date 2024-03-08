@@ -19,9 +19,22 @@ export async function deleteSource({ env, daCtx }) {
   return deleteObject(env, daCtx);
 }
 
+async function invalidateCollab(url, env) {
+  const invURL = `${env.DA_COLLAB}/api/v1/syncadmin?doc=${url}`;
+  await fetch(invURL);
+}
+
 export async function postSource({ req, env, daCtx }) {
   const obj = await putHelper(req, env, daCtx);
-  return putObject(env, daCtx, obj);
+  const resp = await putObject(env, daCtx, obj);
+
+  if (resp.status === 201) {
+    const initiator = req.headers.get('x-da-initiator');
+    if (initiator !== 'collab') {
+      await invalidateCollab(req.url, env);
+    }
+  }
+  return resp;
 }
 
 export async function getSource({ env, daCtx }) {
