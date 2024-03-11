@@ -20,8 +20,10 @@ export async function deleteSource({ env, daCtx }) {
 }
 
 async function invalidateCollab(url, env) {
-  const invURL = `${env.DA_COLLAB}/api/v1/syncadmin?doc=${url}`;
-  await fetch(invURL);
+  if (env.DA_COLLAB) {
+    const invURL = `${env.DA_COLLAB}/api/v1/syncadmin?doc=${url}`;
+    await fetch(invURL);
+  }
 }
 
 export async function postSource({ req, env, daCtx }) {
