@@ -11,12 +11,17 @@
  */
 import { postSource } from '../routes/source.js';
 import { postConfig } from '../routes/config.js';
+import { postVersionSource } from '../routes/version.js';
+import daResp from '../utils/daResp.js';
 
 export default async function postHandler({ req, env, daCtx }) {
   const { path } = daCtx;
 
   if (path.startsWith('/source')) return postSource({ req, env, daCtx });
   if (path.startsWith('/config')) return postConfig({ req, env, daCtx });
-
+  if (path.startsWith('/version/source')) return postVersionSource({ env, daCtx });
+  if (path.startsWith('/test')) {
+    return daResp({ status: 200, body: 'hi' });
+  }
   return undefined;
 }

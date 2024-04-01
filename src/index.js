@@ -23,7 +23,9 @@ export default {
     if (req.method === 'OPTIONS') return daResp({ status: 204 });
 
     const daCtx = await getDaCtx(req, env);
-    if (!daCtx.authorized) return daResp({ status: 401 });
+    const { authorized, key } = daCtx;
+    if (!authorized) return daResp({ status: 401 });
+    if (key?.startsWith('.da-versions')) return daResp({ status: 404 });
 
     let respObj;
     switch (req.method) {

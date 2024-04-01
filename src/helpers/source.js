@@ -50,6 +50,10 @@ function getFormEntries(formData) {
     entries.props = JSON.parse(formData.get('props'));
   }
 
+  if (formData.get('version')) {
+    entries.version = formData.version;
+  }
+
   return entries;
 }
 

@@ -16,6 +16,7 @@ import {
 
 import getS3Config from '../utils/config.js';
 import { sourceRespObject } from '../../helpers/source.js';
+import { putObjectWithVersion } from './version.js';
 
 async function getFileBody(data) {
   await data.text();
@@ -62,13 +63,14 @@ export default async function putObject(env, daCtx, obj) {
 
   const inputs = [];
 
+  let status = 201;
   if (obj) {
     if (obj.data) {
       const isFile = obj.data instanceof File;
       const { body, type } = isFile ? await getFileBody(obj.data) : getObjectBody(obj.data);
-      inputs.push(buildInput({
+      status = (await putObjectWithVersion(config, buildInput({
         org, key, body, type,
-      }));
+      }))).status;
     }
     if (obj.props) {
       const { body, type } = getObjectBody(obj.props);
@@ -91,5 +93,5 @@ export default async function putObject(env, daCtx, obj) {
   }
 
   const body = sourceRespObject(daCtx, obj?.props);
-  return { body: JSON.stringify(body), status: 201, contentType: 'application/json' };
+  return { body: JSON.stringify(body), status, contentType: 'application/json' };
 }

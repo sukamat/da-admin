@@ -12,6 +12,7 @@
 import { getSource } from '../routes/source.js';
 import getList from '../routes/list.js';
 import { getProperties } from '../routes/properties.js';
+import { getVersionSource, getVersionList } from '../routes/version.js';
 
 function get404() {
   return { status: 404, contentLength: 0 };
@@ -37,6 +38,15 @@ export default async function headHandler({ env, daCtx, head }) {
       status,
     };
   }
+  if (path.startsWith('/version/list')) {
+    const { body, contentType, status } = await getVersionList({ env, daCtx });
+    return {
+      contentLength: body.length,
+      contentType,
+      status,
+    };
+  }
+  if (path.startsWith('/version/source')) return getVersionSource({ env, daCtx, head });
   if (path.startsWith('/properties')) {
     const { body, status, contentType } = getProperties();
     return { status, contentType, contentLength: body.length };
