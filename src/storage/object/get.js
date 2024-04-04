@@ -42,22 +42,21 @@ export default async function getObject(env, { org, key }, head = false) {
     } catch (e) {
       return { body: '', status: e.$metadata?.httpStatusCode || 404, contentLength: 0 };
     }
-  } else {
-    const url = await getSignedUrl(client, new HeadObjectCommand(input), { expiresIn: 3600 });
-    const resp = await fetch(url, { method: 'HEAD' });
-    const Metadata = {};
-    resp.headers.forEach((value, key2) => {
-      if (key2.startsWith('x-amz-meta-')) {
-        Metadata[key2.substring('x-amz-meta-'.length)] = value;
-      }
-    });
-    return {
-      body: '',
-      status: resp.status,
-      contentType: resp.headers.get('content-type'),
-      contentLength: resp.headers.get('content-length'),
-      metadata: Metadata,
-      etag: resp.headers.get('etag'),
-    };
   }
+  const url = await getSignedUrl(client, new HeadObjectCommand(input), { expiresIn: 3600 });
+  const resp = await fetch(url, { method: 'HEAD' });
+  const Metadata = {};
+  resp.headers.forEach((value, key2) => {
+    if (key2.startsWith('x-amz-meta-')) {
+      Metadata[key2.substring('x-amz-meta-'.length)] = value;
+    }
+  });
+  return {
+    body: '',
+    status: resp.status,
+    contentType: resp.headers.get('content-type'),
+    contentLength: resp.headers.get('content-length'),
+    metadata: Metadata,
+    etag: resp.headers.get('etag'),
+  };
 }
