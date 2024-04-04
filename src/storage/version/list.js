@@ -25,15 +25,17 @@ export async function listObjectVersions(env, { org, key }) {
     }, true);
     const timestamp = parseInt(entryResp.metadata.timestamp || '0', 10);
     const users = JSON.parse(entryResp.metadata.users || '[{"email":"anonymous"}]');
+    const { path } = entryResp.metadata;
 
     if (entryResp.contentLength > 0) {
       return {
         url: `/versionsource/${org}/${current.metadata.id}/${entry.name}.${entry.ext}`,
         users,
         timestamp,
+        path,
       };
     }
-    return { users, timestamp };
+    return { users, timestamp, path };
   }));
 
   return {

@@ -58,7 +58,11 @@ export async function postObjectVersion(env, daCtx) {
     ID: current.metadata.id,
     Version: current.metadata.version,
     Ext: daCtx.ext,
-    Metadata: { Users: current.metadata?.users || JSON.stringify([{ email: 'anonymous' }]), Timestamp: current.metadata?.timestamp || `${Date.now()}` },
+    Metadata: {
+      Users: current.metadata?.users || JSON.stringify([{ email: 'anonymous' }]),
+      Timestamp: current.metadata?.timestamp || `${Date.now()}`,
+      Path: current.metadata?.path || daCtx.key,
+    },
   }, false);
   return { status: resp.status === 200 ? 201 : resp.status };
 }
@@ -72,12 +76,13 @@ export async function putObjectWithVersion(env, daCtx, update, body) {
   const Users = JSON.stringify(daCtx.users);
   const input = buildInput(update);
   const Timestamp = `${Date.now()}`;
+  const Path = update.key;
   if (current.status === 404) {
     const client = ifNoneMatch(config);
     const command = new PutObjectCommand({
       ...input,
       Metadata: {
-        ID, Version, Users, Timestamp,
+        ID, Version, Users, Timestamp, Path,
       },
     });
     try {
@@ -97,7 +102,11 @@ export async function putObjectWithVersion(env, daCtx, update, body) {
     ID,
     Version,
     Ext: daCtx.ext,
-    Metadata: { Users: current.metadata?.users || JSON.stringify([{ email: 'anonymous' }]), Timestamp: current.metadata?.timestamp || Timestamp },
+    Metadata: {
+      Users: current.metadata?.users || JSON.stringify([{ email: 'anonymous' }]),
+      Timestamp: current.metadata?.timestamp || Timestamp,
+      Path: current.metadata?.path || Path,
+    },
   });
 
   if (versionResp.status !== 200 && versionResp.status !== 412) {
@@ -108,7 +117,7 @@ export async function putObjectWithVersion(env, daCtx, update, body) {
   const command = new PutObjectCommand({
     ...input,
     Metadata: {
-      ID, Version: crypto.randomUUID(), Users, Timestamp,
+      ID, Version: crypto.randomUUID(), Users, Timestamp, Path,
     },
   });
   try {
