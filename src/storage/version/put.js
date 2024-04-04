@@ -60,7 +60,7 @@ export async function postObjectVersion(env, daCtx) {
     Ext: daCtx.ext,
     Metadata: { Users: current.metadata?.users || JSON.stringify([{ email: 'anonymous' }]) },
   }, false);
-  return resp.status === 200 ? 201 : resp.status;
+  return { status: resp.status === 200 ? 201 : resp.status };
 }
 
 export async function putObjectWithVersion(env, daCtx, update, body) {
