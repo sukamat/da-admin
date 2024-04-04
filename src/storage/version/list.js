@@ -23,10 +23,17 @@ export async function listObjectVersions(env, { org, key }) {
       org,
       key: `.da-versions/${current.metadata.id}/${entry.name}.${entry.ext}`,
     }, true);
-    return {
-      url: `/versionsource/${org}/${current.metadata.id}/${entry.name}.${entry.ext}`,
-      users: JSON.parse(entryResp.metadata.users),
-    };
+    const timestamp = parseInt(entryResp.metadata.timestamp || '0', 10);
+    const users = JSON.parse(entryResp.metadata.users || '[{"email":"anonymous"}]');
+
+    if (entryResp.contentLength > 0) {
+      return {
+        url: `/versionsource/${org}/${current.metadata.id}/${entry.name}.${entry.ext}`,
+        users,
+        timestamp,
+      };
+    }
+    return { users, timestamp };
   }));
 
   return {

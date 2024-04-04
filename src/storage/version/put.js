@@ -58,7 +58,7 @@ export async function postObjectVersion(env, daCtx) {
     ID: current.metadata.id,
     Version: current.metadata.version,
     Ext: daCtx.ext,
-    Metadata: { Users: current.metadata?.users || JSON.stringify([{ email: 'anonymous' }]) },
+    Metadata: { Users: current.metadata?.users || JSON.stringify([{ email: 'anonymous' }]), Timestamp: current.metadata?.timestamp || `${Date.now()}` },
   }, false);
   return { status: resp.status === 200 ? 201 : resp.status };
 }
@@ -71,10 +71,14 @@ export async function putObjectWithVersion(env, daCtx, update, body) {
   const Version = current.metadata?.version || crypto.randomUUID();
   const Users = JSON.stringify(daCtx.users);
   const input = buildInput(update);
+  const Timestamp = `${Date.now()}`;
   if (current.status === 404) {
     const client = ifNoneMatch(config);
     const command = new PutObjectCommand({
-      ...input, Metadata: { ID, Version, Users },
+      ...input,
+      Metadata: {
+        ID, Version, Users, Timestamp,
+      },
     });
     try {
       const resp = await client.send(command);
@@ -93,7 +97,7 @@ export async function putObjectWithVersion(env, daCtx, update, body) {
     ID,
     Version,
     Ext: daCtx.ext,
-    Metadata: { Users: current.metadata?.Users || JSON.stringify([{ email: 'anonymous' }]) },
+    Metadata: { Users: current.metadata?.users || JSON.stringify([{ email: 'anonymous' }]), Timestamp: current.metadata?.timestamp || Timestamp },
   });
 
   if (versionResp.status !== 200 && versionResp.status !== 412) {
@@ -102,7 +106,10 @@ export async function putObjectWithVersion(env, daCtx, update, body) {
 
   const client = ifMatch(config, `${current.etag}`);
   const command = new PutObjectCommand({
-    ...input, Metadata: { ID, Version: crypto.randomUUID(), Users },
+    ...input,
+    Metadata: {
+      ID, Version: crypto.randomUUID(), Users, Timestamp,
+    },
   });
   try {
     const resp = await client.send(command);
