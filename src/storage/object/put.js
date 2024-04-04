@@ -16,7 +16,7 @@ import {
 
 import getS3Config from '../utils/config.js';
 import { sourceRespObject } from '../../helpers/source.js';
-import { putObjectWithVersion } from './version.js';
+import { putObjectWithVersion } from '../version/put.js';
 
 async function getFileBody(data) {
   await data.text();
@@ -68,9 +68,9 @@ export default async function putObject(env, daCtx, obj) {
     if (obj.data) {
       const isFile = obj.data instanceof File;
       const { body, type } = isFile ? await getFileBody(obj.data) : getObjectBody(obj.data);
-      status = (await putObjectWithVersion(config, buildInput({
+      status = await putObjectWithVersion(env, daCtx, {
         org, key, body, type,
-      }))).status;
+      });
     }
     if (obj.props) {
       const { body, type } = getObjectBody(obj.props);

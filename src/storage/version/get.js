@@ -9,19 +9,8 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
+import getObject from '../object/get.js';
 
-import { getObjectVersion } from '../storage/version/get.js';
-import { listObjectVersions } from '../storage/version/list.js';
-import { postObjectVersion } from '../storage/version/put.js';
-
-export async function getVersionList({ env, daCtx }) {
-  return listObjectVersions(env, daCtx);
-}
-
-export async function getVersionSource({ env, daCtx, head }) {
-  return getObjectVersion(env, daCtx, head);
-}
-
-export async function postVersionSource({ env, daCtx }) {
-  return postObjectVersion(env, daCtx);
+export async function getObjectVersion(env, { org, key }, head) {
+  return getObject(env, { org, key: `.da-versions/${key}` }, head);
 }

@@ -23,13 +23,13 @@ function getRobots() {
   return { contentLength: body.length, status: 200 };
 }
 
-export default async function headHandler({ env, daCtx, head }) {
+export default async function headHandler({ env, daCtx }) {
   const { path } = daCtx;
 
   if (path.startsWith('/favicon.ico')) return get404();
   if (path.startsWith('/robots.txt')) return getRobots();
 
-  if (path.startsWith('/source')) return getSource({ env, daCtx, head });
+  if (path.startsWith('/source')) return getSource({ env, daCtx, head: true });
   if (path.startsWith('/list')) {
     const { body, contentType, status } = await getList({ env, daCtx });
     return {
@@ -38,7 +38,7 @@ export default async function headHandler({ env, daCtx, head }) {
       status,
     };
   }
-  if (path.startsWith('/version/list')) {
+  if (path.startsWith('/versionlist')) {
     const { body, contentType, status } = await getVersionList({ env, daCtx });
     return {
       contentLength: body.length,
@@ -46,7 +46,7 @@ export default async function headHandler({ env, daCtx, head }) {
       status,
     };
   }
-  if (path.startsWith('/version/source')) return getVersionSource({ env, daCtx, head });
+  if (path.startsWith('/versionsource')) return getVersionSource({ env, daCtx, head: true });
   if (path.startsWith('/properties')) {
     const { body, status, contentType } = getProperties();
     return { status, contentType, contentLength: body.length };
