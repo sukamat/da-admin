@@ -23,60 +23,70 @@ describe('Source Route', () => {
       }
     };
 
-    const callbacks = [];
     const { postSource } = await esmock(
       '../../src/routes/source.js', {
         '../../src/storage/object/put.js': {
           default: putResp
-        },
-        import: { fetch: async (url) => {
-          callbacks.push(url);
-        }
       }
     });
 
-    const headers = new Map();
-    headers.set('content-type', 'text/html');
+    const savedFetch = globalThis.fetch;
+    try {
+      const callbacks = [];
+      globalThis.fetch = async (url) => {
+        callbacks.push(url);
+      };
 
-    const req = {
-      headers,
-      url: 'http://localhost:8787/source/a/b/mydoc.html'
-    };
+      const headers = new Map();
+      headers.set('content-type', 'text/html');
 
-    const resp = await postSource({ req, env, daCtx });
-    assert.equal(201, resp.status);
-    assert.equal(1, callbacks.length);
-    assert.equal('http://localhost:1234/api/v1/syncadmin?doc=http://localhost:8787/source/a/b/mydoc.html', callbacks[0]);
+      const req = {
+        headers,
+        url: 'http://localhost:8787/source/a/b/mydoc.html'
+      };
+
+      const resp = await postSource({ req, env, daCtx });
+      assert.equal(201, resp.status);
+      assert.equal(1, callbacks.length);
+      assert.equal('http://localhost:1234/api/v1/syncadmin?doc=http://localhost:8787/source/a/b/mydoc.html', callbacks[0]);
+    } finally {
+      globalThis.fetch = savedFetch;
+    }
   });
 
   it('Test postSource from collab does not trigger callback', async () => {
-    const callbacks = [];
     const { postSource } = await esmock(
       '../../src/routes/source.js', {
         '../../src/storage/object/put.js': {
           default: async () => ({ status: 201 })
-        },
-        import: { fetch: async (url) => {
-          callbacks.push(url);
-        }
       }
     });
 
-    const headers = new Map();
-    headers.set('content-type', 'text/html');
-    headers.set('x-da-initiator', 'collab');
+    const savedFetch = globalThis.fetch;
+    try {
+      const callbacks = [];
+      globalThis.fetch = async (url) => {
+        callbacks.push(url);
+      };
 
-    const req = {
-      headers,
-      url: 'http://localhost:8787/source/a/b/mydoc.html'
-    };
+      const headers = new Map();
+      headers.set('content-type', 'text/html');
+      headers.set('x-da-initiator', 'collab');
 
-    const env = { DA_COLLAB: 'http://localhost:1234' };
-    const daCtx = {};
+      const req = {
+        headers,
+        url: 'http://localhost:8787/source/a/b/mydoc.html'
+      };
 
-    const resp = await postSource({ req, env, daCtx });
-    assert.equal(201, resp.status);
-    assert.equal(0, callbacks.length);
+      const env = { DA_COLLAB: 'http://localhost:1234' };
+      const daCtx = {};
+
+      const resp = await postSource({ req, env, daCtx });
+      assert.equal(201, resp.status);
+      assert.equal(0, callbacks.length);
+    } finally {
+      globalThis.fetch = savedFetch;
+    }
   });
 
   it('Test failing postSource does not trigger callback', async () => {
@@ -85,27 +95,33 @@ describe('Source Route', () => {
       '../../src/routes/source.js', {
         '../../src/storage/object/put.js': {
           default: async () => ({ status: 500 })
-        },
-        import: { fetch: async (url) => {
-          callbacks.push(url);
-        }
       }
     });
 
-    const headers = new Map();
-    headers.set('content-type', 'text/html');
+    const savedFetch = globalThis.fetch;
+    try {
+      const callbacks = [];
+      globalThis.fetch = async (url) => {
+        callbacks.push(url);
+      };
 
-    const req = {
-      headers,
-      url: 'http://localhost:8787/source/a/b/mydoc.html'
-    };
+      const headers = new Map();
+      headers.set('content-type', 'text/html');
 
-    const env = { DA_COLLAB: 'http://localhost:1234' };
-    const daCtx = {};
+      const req = {
+        headers,
+        url: 'http://localhost:8787/source/a/b/mydoc.html'
+      };
 
-    const resp = await postSource({ req, env, daCtx });
-    assert.equal(500, resp.status);
-    assert.equal(0, callbacks.length);
+      const env = { DA_COLLAB: 'http://localhost:1234' };
+      const daCtx = {};
+
+      const resp = await postSource({ req, env, daCtx });
+      assert.equal(500, resp.status);
+      assert.equal(0, callbacks.length);
+    } finally {
+      globalThis.fetch = savedFetch;
+    }
   });
 
   it('Test getSource', async () => {

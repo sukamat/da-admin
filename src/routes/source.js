@@ -43,7 +43,7 @@ export async function postSource({ req, env, daCtx }) {
   const obj = await putHelper(req, env, daCtx);
   const resp = await putObject(env, daCtx, obj);
 
-  if (resp.status === 201 || resp.status === 200 /* TODO should be 201 */) {
+  if (resp.status === 201 || resp.status === 200) {
     const initiator = req.headers.get('x-da-initiator');
     if (initiator !== 'collab') {
       await invalidateCollab(req.url, env);
