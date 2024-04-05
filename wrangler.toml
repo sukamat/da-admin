@@ -3,6 +3,11 @@ main = "src/index.js"
 compatibility_date = "2023-10-30"
 
 vars = { DA_COLLAB = "https://collab.da.live" }
+
+services = [
+  { binding = "dacollab", service = "da-collab" }
+]
+
 kv_namespaces = [
   { binding = "DA_AUTH", id = "d6217b7c63ef40889583ba5c080c3908" },
   { binding = "DA_CONFIG", id = "feb8618620bb4ca3a866f1c71adbe8ef" }
