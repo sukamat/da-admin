@@ -54,7 +54,44 @@ describe('Source Route', () => {
     }
   });
 
-  it('Test postSource from collab does not trigger callback', async () => {
+  it('Test invalidate using service binding', async () => {
+    const sb_callbacks = [];
+    const dacollab = {
+      fetch: async (url) => sb_callbacks.push(url)
+    };
+    const env = {
+      dacollab,
+      DA_COLLAB: 'http://localhost:4444'
+    };
+
+    const daCtx = {};
+    const putResp = async (e, c) => {
+      if (e === env && c === daCtx) {
+        return { status: 200 };
+      }
+    };
+
+    const { postSource } = await esmock(
+      '../../src/routes/source.js', {
+        '../../src/storage/object/put.js': {
+          default: putResp
+      }
+    });
+
+    const headers = new Map();
+    headers.set('x-da-initiator', 'blah');
+
+    const req = {
+      headers,
+      url: 'http://localhost:9876/source/somedoc.html'
+    };
+
+    const resp = await postSource({ req, env, daCtx });
+    assert.equal(200, resp.status);
+    assert.deepStrictEqual(['https://localhost/api/v1/syncadmin?doc=http://localhost:9876/source/somedoc.html'], sb_callbacks);
+  });
+
+  it('Test postSource from collab does not trigger invalidate callback', async () => {
     const { postSource } = await esmock(
       '../../src/routes/source.js', {
         '../../src/storage/object/put.js': {
