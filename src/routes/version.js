@@ -9,23 +9,19 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-import getObject from '../storage/object/get.js';
-import putObject from '../storage/object/put.js';
-import deleteObject from '../storage/object/delete.js';
 
-import putHelper from '../helpers/source.js';
+import { getObjectVersion } from '../storage/version/get.js';
+import { listObjectVersions } from '../storage/version/list.js';
 import { postObjectVersion } from '../storage/version/put.js';
 
-export async function deleteSource({ env, daCtx }) {
-  await postObjectVersion(env, daCtx);
-  return deleteObject(env, daCtx);
+export async function getVersionList({ env, daCtx }) {
+  return listObjectVersions(env, daCtx);
 }
 
-export async function postSource({ req, env, daCtx }) {
-  const obj = await putHelper(req, env, daCtx);
-  return putObject(env, daCtx, obj);
+export async function getVersionSource({ env, daCtx, head }) {
+  return getObjectVersion(env, daCtx, head);
 }
 
-export async function getSource({ env, daCtx, head }) {
-  return getObject(env, daCtx, head);
+export async function postVersionSource({ env, daCtx }) {
+  return postObjectVersion(env, daCtx);
 }
