@@ -9,20 +9,12 @@
  * OF ANY KIND, either express or implied. See the License for the specific language
  * governing permissions and limitations under the License.
  */
-export default function daResp({
-  status,
-  body,
-  contentType = 'application/json',
-  contentLength,
-}) {
-  const headers = new Headers();
-  headers.append('Access-Control-Allow-Origin', '*');
-  headers.append('Access-Control-Allow-Methods', 'HEAD, GET, PUT, POST, DELETE, PATCH');
-  headers.append('Access-Control-Allow-Headers', '*');
-  headers.append('Content-Type', contentType);
-  if (contentLength) {
-    headers.append('Content-Length', contentLength);
-  }
+import { patchVersion } from '../routes/version.js';
 
-  return new Response(body, { status, headers });
+export default async function patchHandler({ req, env, daCtx }) {
+  const { path } = daCtx;
+
+  if (path.startsWith('/versionsource')) return patchVersion({ req, env, daCtx });
+
+  return undefined;
 }
