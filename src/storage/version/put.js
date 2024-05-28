@@ -95,6 +95,7 @@ export async function putObjectWithVersion(env, daCtx, update, body) {
   const input = buildInput(update);
   const Timestamp = `${Date.now()}`;
   const Path = update.key;
+
   if (current.status === 404) {
     const client = ifNoneMatch(config);
     const command = new PutObjectCommand({
@@ -114,9 +115,16 @@ export async function putObjectWithVersion(env, daCtx, update, body) {
     }
   }
 
+  const pps = current.metadata?.preparsingstore || '0';
+
+  // Store the body if preparsingstore is not defined, so a once-off store
+  const storeBody = body && pps === '0';
+  const Preparsingstore = storeBody ? Timestamp : pps;
+  const Label = storeBody ? 'Collab Parse' : undefined;
+
   const versionResp = await putVersion(config, {
     Bucket: input.Bucket,
-    Body: current.body,
+    Body: (storeBody ? current.body : ''),
     ID,
     Version,
     Ext: daCtx.ext,
@@ -124,6 +132,7 @@ export async function putObjectWithVersion(env, daCtx, update, body) {
       Users: current.metadata?.users || JSON.stringify([{ email: 'anonymous' }]),
       Timestamp: current.metadata?.timestamp || Timestamp,
       Path: current.metadata?.path || Path,
+      Label,
     },
   });
 
@@ -135,7 +144,7 @@ export async function putObjectWithVersion(env, daCtx, update, body) {
   const command = new PutObjectCommand({
     ...input,
     Metadata: {
-      ID, Version: crypto.randomUUID(), Users, Timestamp, Path,
+      ID, Version: crypto.randomUUID(), Users, Timestamp, Path, Preparsingstore,
     },
   });
   try {
