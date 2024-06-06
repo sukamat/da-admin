@@ -20,12 +20,28 @@ import {
 } from '../utils/version.js';
 import getObject from '../object/get.js';
 
+export function getContentLength(body) {
+  if (body === undefined) {
+    return undefined;
+  }
+
+  if (typeof body === 'string' || body instanceof String) {
+    // get string length in bytes
+    return new Blob([body]).size;
+  } else if (body instanceof File) {
+    return body.size;
+  }
+  return undefined;
+}
+
 export async function putVersion(config, {
-  Bucket, Body, ID, Version, Ext, Metadata,
+  Bucket, Body, ID, Version, Ext, Metadata, ContentLength,
 }, noneMatch = true) {
+  const length = ContentLength ?? getContentLength(Body);
+
   const client = noneMatch ? ifNoneMatch(config) : createBucketIfMissing(new S3Client(config));
   const input = {
-    Bucket, Key: `.da-versions/${ID}/${Version}.${Ext}`, Body, Metadata,
+    Bucket, Key: `.da-versions/${ID}/${Version}.${Ext}`, Body, Metadata, ContentLength: length,
   };
   const command = new PutObjectCommand(input);
   try {
@@ -37,11 +53,13 @@ export async function putVersion(config, {
 }
 
 function buildInput({
-  org, key, body, type,
+  org, key, body, type, contentLength,
 }) {
+  const length = contentLength ?? getContentLength(body);
+
   const Bucket = `${org}-content`;
   return {
-    Bucket, Key: key, Body: body, ContentType: type,
+    Bucket, Key: key, Body: body, ContentType: type, ContentLength: length,
   };
 }
 
@@ -88,6 +106,7 @@ export async function putObjectWithVersion(env, daCtx, update, body) {
   const versionResp = await putVersion(config, {
     Bucket: input.Bucket,
     Body: (body || storeBody ? current.body : ''),
+    ContentLength: (body || storeBody ? current.contentLength : undefined),
     ID,
     Version,
     Ext: daCtx.ext,
@@ -131,11 +150,11 @@ export async function postObjectVersion(req, env, daCtx) {
   }
   const label = reqJSON?.label;
 
-  const { body, contentType } = await getObject(env, daCtx);
+  const { body, contentLength, contentType } = await getObject(env, daCtx);
   const { org, key } = daCtx;
 
   const resp = await putObjectWithVersion(env, daCtx, {
-    org, key, body, type: contentType, label,
+    org, key, body, contentLength, type: contentType, label,
   }, true);
 
   return { status: resp === 200 ? 201 : resp };
