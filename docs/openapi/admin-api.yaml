@@ -6,7 +6,7 @@ info:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   x-logo:
-    url: http://127.0.0.1:8080/docs/openapi/img/da-logo.png
+    url: https://raw.githubusercontent.com/auniverseaway/da-admin/main/docs/openapi/img/da-logo.png
   description: |
     DA Admin API is used to manage Document Authoring content repositories.
 
