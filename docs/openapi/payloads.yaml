@@ -6,12 +6,7 @@ putSourceJson:
       readyForLoc: true
       lastRollout: 'Wed, 29 Nov 2023 01:20:40 GMT'
       timesAskedWhyNoNesting: 492
-putSourceForm:
-  summary: Override site details
+copySourceForm:
+  summary:
   value: |
-    data: <binary>
-    props: `{
-        "aemOrigin":"https://main--blog--adobecom.hlx.page",
-        "readForLoc": true,
-        "lastRollout": "Wed, 29 Nov 2023 01:20:40 GMT"
-      }`
+    destination: '/aemsites/geometrixx/path/to/file.html'

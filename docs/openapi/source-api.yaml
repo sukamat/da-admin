@@ -3,51 +3,70 @@ source:
     operationId: sourceDetails
     tags:
       - Source
-    summary: Source content status
-    description: Returns details about the content source.
+    summary: Get source content
+    description: Get a content **source** from an organization.
     parameters:
-      - $ref: "./parameters.yaml#/daOwnerParam"
+      - $ref: "./parameters.yaml#/orgParam"
+      - $ref: "./parameters.yaml#/repoParam"
       - $ref: "./parameters.yaml#/pathParam"
+      - $ref: "./parameters.yaml#/extReqParam"
     responses:
       '200':
-        $ref: "./responses.yaml#/200"
+        $ref: "./responses.yaml#/source/200"
       '400':
         $ref: "./responses.yaml#/400"
+      '401':
+        $ref: "./responses.yaml#/401"
       '404':
         $ref: "./responses.yaml#/404"
-  put:
-    operationId: createSite
+      '500':
+        $ref: "./responses.yaml#/500"
+  post:
+    operationId: createSource
     tags:
       - Source
-    summary: New source content
+    summary: Create source content
     description: |
-      Create a content source within the owner's bucket.
-      There are two supported request methods:
-
-      1. **JSON** - Useful to store text (HTML, JSON, etc.) documents or to store only properties for a given resource (including folders).
-      1. **Form** - Useful to store blobs while also providing the ability to store properties for a given resource.
-
+      Create a content **source** within an organization.
     parameters:
-      - $ref: "./parameters.yaml#/daOwnerParam"
+      - $ref: "./parameters.yaml#/orgParam"
+      - $ref: "./parameters.yaml#/repoParam"
       - $ref: "./parameters.yaml#/pathParam"
+      - $ref: "./parameters.yaml#/extReqParam"
     requestBody:
       content:
-        application/json:
-          schema:
-            $ref: './schemas.yaml#/jsonSource'
-          examples:
-            json:
-              $ref: "./payloads.yaml#/putSourceJson"
         multipart/form-data:
           schema:
             $ref: './schemas.yaml#/source'
           examples:
-            json:
-              $ref: "./payloads.yaml#/putSourceForm"
+            multipart:
+              $ref: "./payloads.yaml#/copySourceForm"
     responses:
       '201':
         $ref: "./responses.yaml#/201"
       '400':
         $ref: "./responses.yaml#/400"
+      '401':
+        $ref: "./responses.yaml#/401"
+      '500':
+        $ref: "./responses.yaml#/500"
+  delete:
+    operationId: sourceDelete
+    tags:
+      - Source
+    summary: Delete source content
+    description: Delete the content **source** or **directory**.
+    parameters:
+      - $ref: "./parameters.yaml#/orgParam"
+      - $ref: "./parameters.yaml#/repoParam"
+      - $ref: "./parameters.yaml#/pathParam"
+      - $ref: "./parameters.yaml#/extParam"
+    responses:
+      '204':
+        $ref: "./responses.yaml#/204"
+      '400':
+        $ref: "./responses.yaml#/400"
+      '401':
+        $ref: "./responses.yaml#/401"
       '500':
         $ref: "./responses.yaml#/500"

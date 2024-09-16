@@ -5,24 +5,55 @@ source:
     data:
       description: The content to store at the specified location.
       type: blob
-    props:
-      description: > 
-        The properties associated with the content source.
-        <br>Should be a string encoded object of key/value pairs. Example:
-        <br>`{"aemOrigin":"https://main--blog--adobecom.aem.page"}`
-      type: string
 
-jsonSource:
-  description: Create site body
+copy:
+  source:
+    properties:
+      destination:
+        description: The destination path of the copy.
+        type: string
+
+move:
+  source:
+    properties:
+      destination:
+        description: The destination path of the move.
+        type: string
+
+aemDoc:
+  description: Document-based HTML
+  type: string
+
+aemSheet:
+  description: The basic schema of sheet-based JSON
   properties:
+    total:
+      description: The total number of entries available.
+      type: number
+    limit:
+      description: The pagination rule to limit entries by.
+      type: number
+    offset:
+      description: The offset count of the paginated data.
+      type: number
     data:
-      description: The content to store at the specified location.
-      type: object
-    props:
-      description: The properties associated with the content source.
-      type: object
-      additionalProperties:
-        type: [string, number, boolean]
+      description: An array objects where each object represents a row in the sheet.
+      type: array
+      items:
+        type: object
+        description: An object representing a row of data.
+        properties:
+          key:
+            description: The heading of the column.
+            type: string
+            format: any
+          value:
+            description: The value of the row for the associated column.
+            type: string
+            format: any
+    ':type':
+      description: The type of sheet. This is either sheet or multi-sheet
+      type: string
 
 sourceInfo:
   required:
@@ -78,6 +109,40 @@ sourceList:
             description: The properties associated with the source.
             type: object
 
+version-list:
+  required:
+    - versions
+  description: List of audits and sources.
+  type: array
+  items:
+    required:
+      - path
+      - timestamp
+      - users
+    type: object
+    properties:
+      timestamp:
+        description: The unix timestamp of when the version or audit was created.
+        type: number
+        format: number
+      url:
+        description: The DA Admin path of the version.
+        type: string
+        format: url
+      path:
+        description: The path of the source associated with the version or audit.
+        type: string
+        format: url
+      users:
+        description: The uses associated with the audit or version.
+        items:
+          type: object
+          description: An object representing a row of data.
+          properties:
+            email:
+              description: The email address of the user.
+              type: string
+              format: any
 
 codeInfo:
   required:
@@ -438,7 +503,7 @@ indexResource:
       type: string
     githubLink:
       description: Github url of the helix-index.yaml
-      example: https://github.com/owner/repo/blob/main/helix-index.yaml#L4
+      example: https://github.com/org/repo/blob/main/helix-index.yaml#L4
       type: string
       format: url
     indexedUrl:
@@ -447,7 +512,7 @@ indexResource:
         Deprecation Note: The indexed html is always fetched from the preview/live url at the time
         of publishing and hence not required in helix-index.yaml anymore.
       deprecated: true
-      example: https://main--owner--repo.hlx.page/en/2021/blog
+      example: https://main--org--repo.hlx.page/en/2021/blog
       type: string
       format: url
     lastModified:
@@ -491,22 +556,22 @@ resourceLinksInfo:
       properties:
         status:
           description: link of the status api
-          example: https://admin.hlx.page/status/owner/repo/ref
+          example: https://admin.hlx.page/status/org/repo/ref
           type: string
           format: url
         live:
           description: link of the live api
-          example: https://admin.hlx.page/live/owner/repo/ref
+          example: https://admin.hlx.page/live/org/repo/ref
           type: string
           format: url
         preview:
           description: link of the preview api
-          example: https://admin.hlx.page/preview/owner/repo/ref
+          example: https://admin.hlx.page/preview/org/repo/ref
           type: string
           format: url
         code:
           description: link of the code api
-          example: https://admin.hlx.page/code/owner/repo/ref
+          example: https://admin.hlx.page/code/org/repo/ref
           type: string
           format: url
 
@@ -690,7 +755,7 @@ snapshotLinksInfo:
       properties:
         snapshot:
           description: link of the status api
-          example: https://admin.hlx.page/snaphost/owner/repo/ref/1234
+          example: https://admin.hlx.page/snaphost/org/repo/ref/1234
           type: string
           format: url
 
@@ -791,17 +856,17 @@ jobLinksInfo:
       properties:
         self:
           description: link of the job api
-          example: https://admin.hlx.page/job/owner/repo/ref/preview/job-13
+          example: https://admin.hlx.page/job/org/repo/ref/preview/job-13
           type: string
           format: url
         details:
           description: link of the job details api
-          example: https://admin.hlx.page/job/owner/repo/ref/preview/job-13/details
+          example: https://admin.hlx.page/job/org/repo/ref/preview/job-13/details
           type: string
           format: url
         list:
           description: link of the job list
-          example: https://admin.hlx.page/job/owner/repo/ref/preview
+          example: https://admin.hlx.page/job/org/repo/ref/preview
           type: string
           format: url
 
@@ -814,17 +879,17 @@ jobLinksInfoDetails:
       properties:
         self:
           description: link of the job details api
-          example: https://admin.hlx.page/job/owner/repo/ref/preview/job-13/details
+          example: https://admin.hlx.page/job/org/repo/ref/preview/job-13/details
           type: string
           format: url
         job:
           description: link of the job api
-          example: https://admin.hlx.page/job/owner/repo/ref/preview/job-13
+          example: https://admin.hlx.page/job/org/repo/ref/preview/job-13
           type: string
           format: url
         list:
           description: link of the job list
-          example: https://admin.hlx.page/job/owner/repo/ref/preview
+          example: https://admin.hlx.page/job/org/repo/ref/preview
           type: string
           format: url
 
@@ -860,7 +925,7 @@ jobList:
             format: date-time
           href:
             description: link of the job api
-            example: https://admin.hlx.page/job/owner/repo/ref/preview/job-13
+            example: https://admin.hlx.page/job/org/repo/ref/preview/job-13
             type: string
             format: url
 
@@ -873,7 +938,7 @@ jobListLink:
       properties:
         self:
           description: link of the job list
-          example: https://admin.hlx.page/job/owner/repo/ref/preview
+          example: https://admin.hlx.page/job/org/repo/ref/preview
           type: string
           format: url
 

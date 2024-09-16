@@ -3,14 +3,15 @@ list:
     operationId: listDetails
     tags:
       - List
-    summary: List sources - WIP
-    description: Returns a list of sources.
+    summary: List sources
+    description: Returns a list of sources from an organization.
     parameters:
-      - $ref: "./parameters.yaml#/daOwnerParam"
+      - $ref: "./parameters.yaml#/orgParam"
+      - $ref: "./parameters.yaml#/repoParam"
       - $ref: "./parameters.yaml#/pathParam"
     responses:
       '200':
-        $ref: "./responses.yaml#/200-list"
+        $ref: "./responses.yaml#/list/200"
       '400':
         $ref: "./responses.yaml#/400"
       '404':

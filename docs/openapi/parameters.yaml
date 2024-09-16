@@ -1,7 +1,7 @@
-ownerParam:
-  name: owner
+orgParam:
+  name: org
   in: path
-  description: Repository owner.
+  description: The organization.
   required: true
   schema:
     type: string
@@ -19,13 +19,6 @@ refParam:
   required: true
   schema:
     type: string
-daOwnerParam:
-  name: owner
-  in: path
-  description: Name of the source owner.
-  required: true
-  schema:
-    type: string
 pathParam:
   name: path
   in: path
@@ -33,10 +26,24 @@ pathParam:
   required: true
   schema:
     type: string
-headerParam:
-  name: x-da-metadata
-  in: header
+guidParam:
+  name: guid
+  in: path
+  description: GUID of the version source.
+  required: true
   schema:
     type: string
-    example: '{"aemOrigin":"https://main--blog--adobecom.hlx.page"}'
-  description: Value to correlate API requests across systems.
+extReqParam:
+  name: ext
+  in: path
+  description: The source content file extension.
+  required: true
+  schema:
+    type: string
+extParam:
+  name: ext
+  in: path
+  description: The source content file extension.
+  required: false
+  schema:
+    type: string

@@ -8,8 +8,8 @@
     "doc": "docs"
   },
   "scripts": {
-    "docs:build": "npx @redocly/cli build-docs -o docs/index.html admin@v1",
-    "docs:watch": "npx @redocly/cli preview-docs admin@v1",
+    "build:docs": "npx @redocly/cli build-docs -o docs/index.html admin@v1",
+    "watch:docs": "npx @redocly/cli preview-docs admin@v1",
     "lint": "eslint .",
     "test": "c8 mocha --spec=test/**/*.test.js",
     "dev": "wrangler dev",

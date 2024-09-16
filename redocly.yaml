@@ -1,4 +1,4 @@
-organization: chrismillar
+organization: adobe
 
 extends:
   - recommended
@@ -16,12 +16,6 @@ theme:
 
 apis:
   admin@v1:
-    root: docs/openapi/admin-api.yaml
-    rules:
-      operation-4xx-response: off
-      operation-2xx-response: off
-      path-not-include-query: off
-  admin@next:
     root: docs/openapi/admin-api.yaml
     rules:
       operation-4xx-response: off

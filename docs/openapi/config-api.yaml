@@ -1,0 +1,47 @@
+source:
+  get:
+    operationId: getConfig
+    tags:
+      - Config
+    summary: Config
+    description: Get a config for an org, repo, or source.
+    parameters:
+      - $ref: "./parameters.yaml#/pathParam"
+    responses:
+      '200':
+        $ref: "./responses.yaml#/200"
+      '400':
+        $ref: "./responses.yaml#/400"
+      '404':
+        $ref: "./responses.yaml#/404"
+  post:
+    operationId: createConfig
+    tags:
+      - Config
+    summary: New config
+    description: |
+      Create a config for an org, repo, or source.
+
+    parameters:
+      - $ref: "./parameters.yaml#/pathParam"
+    requestBody:
+      content:
+        multipart/form-data:
+          schema:
+            $ref: './schemas.yaml#/source'
+          examples:
+            json:
+              $ref: "./payloads.yaml#/copySourceForm"
+        # application/json:
+        #   schema:
+        #     $ref: './schemas.yaml#/jsonSource'
+        #   examples:
+        #     json:
+        #       $ref: "./payloads.yaml#/putSourceJson"
+    responses:
+      '201':
+        $ref: "./responses.yaml#/201"
+      '400':
+        $ref: "./responses.yaml#/400"
+      '500':
+        $ref: "./responses.yaml#/500"

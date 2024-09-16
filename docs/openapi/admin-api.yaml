@@ -1,20 +1,62 @@
 openapi: 3.1.0
 info:
-  version: 0.0.0.0.1
-  title: Dark Alley Admin
+  version: 1.0-RC
+  title: DA Admin API
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   x-logo:
-    url: https://raw.githubusercontent.com/auniverseaway/da-admin/main/docs/openapi/img/da-logo.png
+    url: http://127.0.0.1:8080/docs/openapi/img/da-logo.png
   description: |
-    Dark Alley Admin is used to manage Dark Alley content repositories.
+    DA Admin API is used to manage Document Authoring content repositories.
 
 servers:
-  - url: https://admin.da.live
-paths:
-  /source/{owner}/{path}:
-    $ref: "./source-api.yaml#/source"
-  /list/{owner}/{path}:
-    $ref: "./list-api.yaml#/list"
+  - url: 'https://admin.da.live'
 
+components:
+  securitySchemes:
+    bearer:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+security:
+  - bearer: []
+
+tags:
+  - name: Source
+    description: |
+      The `source` API allows you to work directly with your content sources (Docs, Sheets, Media).
+  - name: Copy
+    description: |
+      The `copy` API allows you to copy a **directory** or **source**.
+  - name: Move
+    description: |
+      The `move` API allows you to move a **directory** or **source**.
+  - name: Version
+    description: |
+      The `versionsource` and `versionlist` APIs allow you to work with versions of source documents and sheets.
+  - name: List
+    description: |
+      The `list` API will list children of a directory.
+  - name: Config
+    description: |
+      The `config` API will allow you to associate sheet-formatted configurations with orgs, sites, directories, documents, and sheets.
+
+paths:
+  /source/{org}/{repo}/{path}:
+    $ref: "./source-api.yaml#/source"
+  /copy/{org}/{repo}/{path}:
+    $ref: "./copy-api.yaml#/source"
+  /move/{org}/{repo}/{path}:
+    $ref: "./move-api.yaml#/source"
+  /list/{org}/{repo}/{path}:
+    $ref: "./list-api.yaml#/list"
+  /versionsource/{org}/{repo}/{guid}:
+    $ref: "./version-api.yaml#/get"
+  /versionsource/{org}/{repo}/{path}:
+    $ref: "./version-api.yaml#/post"
+  /versionlist/{org}/{repo}/{path}:
+    $ref: "./version-api.yaml#/list"
+  /config/{org}/{repo}/{path}:
+    $ref: "./config-api.yaml#/source"

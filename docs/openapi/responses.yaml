@@ -1,65 +1,74 @@
-'200':
-  description: The source details
-  content:
-    application/json:
-      schema:
-        allOf:
-          - $ref: "./schemas.yaml#/sourceInfo"
-          - $ref: "./schemas.yaml#/aemInfo"
-      examples:
-        success:
-          summary: Resource found
-          value:
-            source:
-              editUrl: "https://da.live/edit#/adobecom/blog/my-cool-post"
-              contentUrl: "https://content.da.live/adobecom/blog/my-cool-post"
-              status: 200
-              props:
-                readyForLoc: true
-                lastRollout: Wed, 29 Nov 2023 01:20:40 GMT
-            aem: 
-              previewUrl: "https://main--blog--adobecom.hlx.page/my-cool-post"
-              liveUrl: "https://main--blog--adobecom.hlx.live/my-cool-post"
-        fail:
-          summary: No resource found
-          value:
-            source:
-              status: 404
-            aem: 
-              previewUrl: "https://main--blog--adobecom.hlx.page/my-cool-post"
-              liveUrl: "https://main--blog--adobecom.hlx.live/my-cool-post"
+source:
+  '200':
+    description: The source content
+    content:
+      text/html:
+        schema:
+          allOf:
+            - $ref: "./schemas.yaml#/aemDoc"
+        examples:
+          html:
+            value: |
+              <body>
+                <header></header>
+                <main>
+                  <div></div>
+                </main>
+              </body>
+      application/json:
+        schema:
+          allOf:
+            - $ref: "./schemas.yaml#/aemSheet"
+      image/png:
+        schema:
+          type: binary
+      image/jpg:
+        schema:
+          type: binary
+      application/pdf:
+        schema:
+          type: binary
+      image/svg+xml:
+        schema:
+          type: xml
 
-'200-list':
-  description: The list of sources
-  content:
-    application/json:
-      schema:
-        allOf:
-          - $ref: "./schemas.yaml#/sourceList"
-      examples:
-        # success:
-        #   summary: Resource found
-        #   value:
-        #     source:
-        #       editUrl: "https://da.live/edit#/adobecom/blog/my-cool-post"
-        #       contentUrl: "https://content.da.live/adobecom/blog/my-cool-post"
-        #       status: 200
-        #       props:
-        #         readyForLoc: true
-        #         lastRollout: Wed, 29 Nov 2023 01:20:40 GMT
-        #     aem: 
-        #       previewUrl: "https://main--blog--adobecom.hlx.page/my-cool-post"
-        #       liveUrl: "https://main--blog--adobecom.hlx.live/my-cool-post"
-        # fail:
-        #   summary: No resource found
-        #   value:
-        #     source:
-        #       status: 404
-        #     aem: 
-        #       previewUrl: "https://main--blog--adobecom.hlx.page/my-cool-post"
-        #       liveUrl: "https://main--blog--adobecom.hlx.live/my-cool-post"
+list:
+  '200':
+    description: The list of sources
+    content:
+      application/json:
+        schema:
+          allOf:
+            - $ref: "./schemas.yaml#/sourceList"
 
+version-list:
+  '200':
+    description: The list of audits and versions.
+    content:
+      application/json:
+        schema:
+          allOf:
+            - $ref: "./schemas.yaml#/version-list"
 
+# versionList:
+#   '200'
+#     description: The list of audits and versions.
+#     content:
+#       application/json:
+#         schema:
+#           allOf:
+#             - $ref: "./schemas.yaml#/sourceList"
+# {
+#         "url": "/versionsource/aemsites/2fc5abae-b2cb-4959-9ea2-eeea48f77d26/11a8378a-62ad-420d-a9b5-0dc216f7e288.html",
+#         "users": [
+#             {
+#                 "email": "anonymous"
+#             }
+#         ],
+#         "timestamp": 1716751580100,
+#         "path": "da-block-collection/demo.html",
+#         "label": "Collab Parse"
+#     }
 
 
 '201':
@@ -83,15 +92,18 @@
             aem: 
               previewUrl: "https://main--blog--adobecom.hlx.page/my-cool-post"
               liveUrl: "https://main--blog--adobecom.hlx.live/my-cool-post"
+'204':
+  description: The request was completed successfully.
+
 '400':
-  description: Invalid request url.
+  description: Invalid request.
   headers:
     X-Error:
       $ref: "./headers.yaml#/xError"
 '401':
-  description: Not authenticated
+  description: Not authenticated.
 '403':
-  description: Access role does not have the required permission
+  description: Not authorized.
 '404':
   description: Resource not found.
   headers:
